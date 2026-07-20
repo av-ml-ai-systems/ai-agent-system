@@ -500,3 +500,241 @@ At this stage, the empty dependency list is intentional because no external libr
 - DRY (centralize project configuration)
 - Separation of Concerns (configuration separated from application code)
 - Modern Python Packaging Standards
+
+## Phase 1.2 - Development Environment Initialization
+
+The project now has a complete development foundation.
+
+### Environment Layers
+
+The architecture is organized into clearly separated responsibilities:
+
+- Operating System
+- Conda Environment
+- Git Repository
+- UV Project Management
+- `pyproject.toml` as the project configuration
+- `src/` as the application source directory
+
+Each layer has a single responsibility and does not overlap with the others.
+
+### Version Control
+
+Git was initialized during project creation with UV.
+
+A `.gitignore` file was reviewed and adapted to the project's needs, ensuring that generated files, caches, virtual environments, coverage reports, and IDE-specific settings are excluded from version control.
+
+This keeps the repository clean, portable, and focused on source code.
+
+### Software Engineering Principles Applied
+
+- Separation of Concerns
+- Single Responsibility Principle
+- KISS
+- DRY
+- Modern Python Development Workflow
+- Clean Repository Practices
+
+## Phase 1.3 - Development Environment and Toolchain
+
+The development environment was configured to use the existing Conda environment (`agent_env`) instead of creating a project-local virtual environment.
+
+### Environment Strategy
+
+Responsibilities are clearly separated:
+
+- Conda manages the Python interpreter and environment.
+- UV manages the Python project and its dependencies.
+- `pyproject.toml` is the single source of truth for project configuration.
+
+### Development Dependencies
+
+The first development tools were added using UV:
+
+- Ruff (linting and formatting)
+- MyPy (static type checking)
+
+These tools are stored under the `dependency-groups.dev` section of `pyproject.toml`, keeping them separate from runtime dependencies.
+
+### Engineering Lesson
+
+Modern development tools often provide sensible defaults, but those defaults should always be evaluated against the project's architecture. In this case, UV's default behavior of creating a `.venv` was intentionally overridden to align with the project's Conda-based workflow.
+
+### Software Engineering Principles Applied
+
+- Separation of Concerns
+- Single Source of Truth
+- KISS
+- Root Cause Analysis
+- Verify Before Continuing
+
+## Phase 1.3.1 - Code Quality with Ruff
+
+The first automated engineering tool was integrated into the project.
+
+### Purpose
+
+Ruff is responsible for enforcing consistent code style and detecting common code quality issues before the software is executed.
+
+Unlike Python itself, which validates syntax during execution, Ruff performs static analysis of the source code.
+
+### Configuration
+
+Ruff was configured directly inside `pyproject.toml`, reinforcing the project's philosophy of maintaining a single source of truth for configuration.
+
+Only two configuration options were defined:
+
+- Target Python version (`py312`)
+- Maximum line length (88 characters)
+
+The configuration intentionally remains minimal, following the KISS and YAGNI principles.
+
+### Validation
+
+The command
+
+`ruff check .`
+
+was executed successfully.
+
+Result:
+
+`All checks passed!`
+
+This confirms that the current codebase satisfies the project's initial code quality standards.
+
+### Software Engineering Principles Applied
+
+- Automation over manual verification
+- Single Source of Truth
+- KISS
+- YAGNI
+- Separation of Concerns
+
+## Phase 1.3.2 - Static Type Checking with MyPy
+
+The project now includes static type checking using MyPy.
+
+### Purpose
+
+MyPy analyzes type annotations without executing the program. It verifies that software components interact according to their declared contracts.
+
+Unlike runtime errors, type inconsistencies can be detected during development, reducing the probability of bugs reaching production.
+
+### Configuration
+
+MyPy was configured in `pyproject.toml`:
+
+```toml
+[tool.mypy]
+mypy_path = ["src"]
+```
+
+The `mypy_path` setting informs MyPy where the project's source code resides, matching the selected `src` project layout.
+
+### Practical Validation
+
+A temporary demonstration file intentionally violated the `Agent` constructor contract:
+
+```python
+agent = Agent(42)
+```
+
+MyPy reported:
+
+```
+Argument 1 to "Agent" has incompatible type "int"; expected "LLM"
+```
+
+The error was detected before execution, illustrating the value of static analysis.
+
+### Engineering Lessons
+
+- Type hints serve as contracts between software components.
+- Static analysis complements runtime testing.
+- The `src` layout requires explicit tool configuration, leading to more robust and portable projects.
+- Early error detection reduces debugging time and improves software reliability.
+
+### Software Engineering Principles Applied
+
+- Separation of Concerns
+- Design by Contract
+- Fail Early
+- KISS
+- Single Source of Truth
+
+## Phase 1.3.3 - Foundations of Unit Testing
+
+Before writing tests, the AAA (Arrange–Act–Assert) pattern was introduced as the standard structure for unit tests.
+
+### The AAA Pattern
+
+A well-designed unit test is divided into three distinct phases:
+
+1. **Arrange**: Prepare the objects, inputs, and dependencies required for the test.
+2. **Act**: Execute the single behavior being tested.
+3. **Assert**: Verify that the observed result matches the expected outcome.
+
+This structure improves readability, maintainability, and makes the purpose of each test immediately clear.
+
+### Engineering Lessons
+
+- Unit tests should verify one behavior at a time.
+- Tests should isolate the component under test from its dependencies.
+- Clear test structure is as important as clear production code.
+- The AAA pattern naturally reinforces the Single Responsibility Principle and Separation of Concerns.
+
+### Software Engineering Principles Applied
+
+- Single Responsibility Principle (SRP)
+- Separation of Concerns
+- KISS
+- Readability over cleverness
+
+## Phase 1.3.3 - Unit Testing Foundation with Pytest
+
+The project now includes automated unit testing using Pytest.
+
+### Purpose
+
+Pytest was integrated to verify that software components fulfill their defined responsibilities through automated tests.
+
+The first unit test validates the behavior of the Agent component independently from external services.
+
+### Testing Approach
+
+The Agent dependency on an LLM was replaced with a FakeLLM implementation.
+
+This allows the test to focus exclusively on Agent behavior without depending on:
+
+- External APIs
+- Network connections
+- Real language models
+- Non-deterministic responses
+
+### Test Structure
+
+The first test follows the AAA pattern:
+
+- Arrange: Create the FakeLLM and Agent objects.
+- Act: Execute the Agent behavior.
+- Assert: Verify that the returned response matches expectations.
+
+### Project Configuration
+
+Pytest was configured in `pyproject.toml` using:
+
+[tool.pytest.ini_options]
+pythonpath = ["src"]
+
+This configuration allows Pytest to correctly discover and import the application package using the project's `src` layout.
+
+### Engineering Principles Applied
+
+- Single Responsibility Principle
+- Separation of Concerns
+- Dependency Injection
+- Test Isolation
+- Convention over Configuration
+- Fail Early
+

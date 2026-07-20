@@ -76,3 +76,32 @@ uv pip install --group dev
 uv pip install -e .
 
 python scripts/dev.py check
+
+------------------------------------------------------
+uv add --dev ruff
+----------------------
+$env:UV_PROJECT_ENVIRONMENT = $env:CONDA_PREFIX
+
+Let's understand what this does.
+
+CONDA_PREFIX points to your active environment (agent_env).
+
+UV_PROJECT_ENVIRONMENT tells UV:
+
+"Use this environment as the project's environment."
+
+So we're aligning UV with our architecture instead of its default behavior.
+-----------------------
+Remove-Item -Recurse -Force .venv
+
+$env:UV_PROJECT_ENVIRONMENT = $env:CONDA_PREFIX
+
+echo $env:UV_PROJECT_ENVIRONMENT
+
+uv add --dev ruff
+
+ruff --version
+
+uv add --dev pytest
+
+uv add --dev pre-commit

@@ -1,0 +1,29 @@
+# Module: .pre-commit-config.yaml
+# Location: project root
+#
+# Purpose
+# -------
+# This configuration defines the automated quality checks executed before
+# creating Git commits.
+#
+# The objective is to prevent low-quality code from entering the repository by
+# automatically running development tools such as Ruff, MyPy, and Pytest.
+
+repos:
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.15.22
+    hooks:
+      - id: ruff
+
+  - repo: https://github.com/pre-commit/mirrors-mypy
+    rev: v2.3.0
+    hooks:
+      - id: mypy
+
+  - repo: local
+    hooks:
+      - id: pytest
+        name: pytest
+        entry: pytest
+        language: system
+        pass_filenames: false

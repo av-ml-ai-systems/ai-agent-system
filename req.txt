@@ -1,0 +1,78 @@
+
+AFTER COMPUTER RESTART (DEEP FREEZE RECOVERY)
+=============================================
+
+Because the C: drive is frozen, dependencies may need to be restored after reboot.
+
+
+Step 1:
+
+conda activate agent_env
+
+
+Step 2:
+
+uv pip install --group dev
+
+
+Step 3:
+
+uv pip install -e .
+
+
+Step 4:
+
+python scripts/dev.py check
+
+
+
+COMMANDS NOT TO USE
+===================
+
+Do not use:
+
+uv sync
+
+Reason:
+
+It creates and manages the .venv environment.
+
+This project does not use .venv.
+
+
+
+Do not use:
+
+uv pip sync
+
+Reason:
+
+It requires a requirements file workflow.
+
+This project uses:
+
+pyproject.toml + uv.lock
+
+
+
+FINAL WORKFLOW SUMMARY
+======================
+
+Normal development:
+
+conda activate agent_env
+
+uv add package-name
+
+python scripts/dev.py check
+
+
+After reboot:
+
+conda activate agent_env
+
+uv pip install --group dev
+
+uv pip install -e .
+
+python scripts/dev.py check

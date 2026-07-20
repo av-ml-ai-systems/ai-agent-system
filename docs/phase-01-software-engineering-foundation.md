@@ -522,7 +522,7 @@ Each layer has a single responsibility and does not overlap with the others.
 
 At this stage of the project, the runtime dependency list is intentionally empty.
 
-The current Agent architecture has been designed using Python abstractions and dependency injection. The implementation intentionally avoids external frameworks and third-party AI services at this stage.e The current implementation does not require external frameworks or third-party AI services.
+The current Agent architecture has been designed using Python abstractions and dependency injection. The implementation intentionally avoids external frameworks and third-party AI services at this stage.
 
 The project separates:
 
@@ -829,3 +829,35 @@ Only validated code is committed.
 ### Result
 
 The project has moved from a simple Python application structure into a maintainable software engineering foundation ready for future AI system development.
+
+## Testing Foundation
+
+The project now includes its first unit testing foundation.
+
+The objective is to verify application behavior independently from external systems.
+
+The Agent component is tested using a FakeLLM implementation instead of a real Language Model.
+
+This allows the test to validate the Agent responsibility:
+
+- Receive a user request.
+- Delegate the request to an LLM dependency.
+- Return the generated response.
+
+The test does not validate external services, APIs, or model performance.
+
+Those responsibilities belong to different layers of the system.
+
+### Testing Principles Applied
+
+- Unit testing.
+- Dependency isolation.
+- Fake objects (test doubles).
+- Separation of concerns.
+- Deterministic behavior.
+
+The testing architecture follows the same dependency injection strategy used in the application design:
+
+Agent → LLM Contract → FakeLLM (test)
+
+This foundation allows future integration with real LLM providers while keeping the core system reliable and testable.

@@ -61,22 +61,22 @@ Pytest
  ↓
 Pre-commit
 
-🟡 Phase 1.4 — Configuration Foundation (Current Next Phase)
+🟢 Phase 1.4 — Configuration Foundation (Completed)
 
-⬜ Introduce pyproject.toml as the source of truth.
-⬜ Add project metadata.
-⬜ Learn how professional Python projects manage configuration.
-⬜ Understand dependency groups and project configuration strategy.
-⬜ Review the role of uv.lock.
-⬜ Prepare the project for future dependencies.
+🟢 Introduce pyproject.toml as the source of truth.
+🟢 Add project metadata.
+🟢 Learn how professional Python projects manage configuration.
+🟢 Understand dependency groups and project configuration strategy.
+🟢 Review the role of uv.lock.
+🟢 Prepare the project for future dependencies.
 
-⬜ Phase 1.5 — Testing Foundation
+🟢 Phase 1.5 — Testing Foundation
 
-⬜ Learn the philosophy of unit testing.
-⬜ Create the first real unit test.
-⬜ Test the Agent using a FakeLLM.
-⬜ Understand mocking and test doubles.
-⬜ Build confidence before integrating a real LLM.
+🟢 Learn the philosophy of unit testing.
+🟢 Create the first real unit test.
+🟢 Test the Agent using a FakeLLM.
+🟢 Understand mocking and test doubles.
+🟢 Build confidence before integrating a real LLM.
 
 ⬜ Phase 2 — First Real LLM Integration
 

@@ -1,9 +1,12 @@
 [project]
 name = "ai-agent-system"
 version = "0.1.0"
-description = "Add your description here"
+description = "An AI Agent system designed to apply software engineering principles, agent architecture patterns, and LLM integration."
 readme = "README.md"
 requires-python = ">=3.12"
+authors = [
+    { name = "Alvaro Vega" }
+]
 dependencies = []
 
 [dependency-groups]

@@ -518,6 +518,37 @@ The architecture is organized into clearly separated responsibilities:
 
 Each layer has a single responsibility and does not overlap with the others.
 
+## Runtime Dependency Strategy
+
+At this stage of the project, the runtime dependency list is intentionally empty.
+
+The current Agent architecture has been designed using Python abstractions and dependency injection. The implementation intentionally avoids external frameworks and third-party AI services at this stage.e The current implementation does not require external frameworks or third-party AI services.
+
+The project separates:
+
+- Runtime dependencies: packages required by the application during execution.
+- Development dependencies: packages required to maintain and validate the codebase.
+
+Current development dependencies include:
+
+- Ruff for code quality validation.
+- MyPy for static type checking.
+- Pytest for automated testing.
+- Pre-commit for automated validation before Git commits.
+
+External runtime dependencies will be introduced only when the architecture requires them.
+
+Examples of future runtime dependencies may include:
+
+- LLM providers.
+- Agent frameworks.
+- Vector databases.
+- API integrations.
+
+This follows the engineering principle:
+
+> Introduce complexity only when it provides real value to the system.
+
 ### Version Control
 
 Git was initialized during project creation with UV.
@@ -738,3 +769,63 @@ This configuration allows Pytest to correctly discover and import the applicatio
 - Convention over Configuration
 - Fail Early
 
+## Phase 1.3 - Engineering Toolchain
+
+The project now includes a complete local software engineering workflow.
+
+### Purpose
+
+The objective of this milestone was to establish automated mechanisms that help maintain code quality, correctness, and reliability during development.
+
+### Implemented Components
+
+The project now integrates:
+
+- Ruff for code quality validation.
+- MyPy for static type checking.
+- Pytest for automated behavior testing.
+- Pre-commit for automatic validation before Git commits.
+
+### Testing Foundation
+
+The first unit test was created for the Agent component.
+
+The test verifies that:
+
+- The Agent receives a user request.
+- The Agent delegates the request to an LLM dependency.
+- The Agent returns the generated response.
+
+A FakeLLM implementation was used to isolate the Agent behavior from external services.
+
+### Development Workflow
+
+The project now follows this workflow:
+
+Developer changes code.
+
+↓
+
+Automated validation runs through pre-commit.
+
+↓
+
+Ruff, MyPy, and Pytest verify the changes.
+
+↓
+
+Only validated code is committed.
+
+### Engineering Principles Applied
+
+- Single Responsibility Principle
+- Separation of Concerns
+- Dependency Injection
+- Test Isolation
+- Fail Early
+- Automation
+- Reproducibility
+
+### Result
+
+The project has moved from a simple Python application structure into a maintainable software engineering foundation ready for future AI system development.

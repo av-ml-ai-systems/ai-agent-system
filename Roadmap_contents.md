@@ -30,32 +30,44 @@
 🟢 Performed the first architectural validation using a conceptual FakeLLM.
 🟢 Documented all important architectural decisions.
 
-🟡 Phase 1.2 — Environment & Dependency Strategy (Next)
+🟢 Phase 1.2 — Environment & Dependency Strategy
 
-⬜ Initialize the project with UV.
-⬜ Create pyproject.toml.
-⬜ Explain every section of pyproject.toml.
-⬜ Configure the project to use the external agent_env.
-⬜ Initialize the Git repository.
-⬜ Create .gitignore.
-⬜ Verify that everything uses the same Python interpreter.
-⬜ Document the environment strategy.
+✅ Initialize the project with UV.
+✅ Create pyproject.toml.
+✅ Explain every section of pyproject.toml.
+✅ Configure the project to use the external agent_env.
+✅ Initialize the Git repository.
+✅ Create .gitignore.
+✅ Verify that everything uses the same Python interpreter.
+✅ Document the environment strategy.
 
-⬜ Phase 1.3 — Engineering Toolchain
+🟢 Phase 1.3 — Engineering Toolchain
 
-⬜ Install Ruff.
-⬜ Install MyPy.
-⬜ Install Pytest.
-⬜ Install pre-commit.
-⬜ Configure each tool.
-⬜ Learn why each tool exists.
-⬜ Run the first validation commands.
+✅ Install Ruff.
+✅ Install MyPy.
+✅ Install Pytest.
+✅ Install pre-commit.
+✅ Configure each tool.
+✅ Learn why each tool exists.
+✅ Run the first validation commands.
 
-⬜ Phase 1.4 — Configuration Foundation
+Completed quality pipeline:
+
+Ruff
+ ↓
+MyPy
+ ↓
+Pytest
+ ↓
+Pre-commit
+
+🟡 Phase 1.4 — Configuration Foundation (Current Next Phase)
 
 ⬜ Introduce pyproject.toml as the source of truth.
 ⬜ Add project metadata.
 ⬜ Learn how professional Python projects manage configuration.
+⬜ Understand dependency groups and project configuration strategy.
+⬜ Review the role of uv.lock.
 ⬜ Prepare the project for future dependencies.
 
 ⬜ Phase 1.5 — Testing Foundation

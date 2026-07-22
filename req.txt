@@ -114,3 +114,7 @@ ollama pull qwen3:4b
 
 uv add httpx
 pre-commit run --all-files
+
+uv add langchain langchain-ollama
+
+uv pip install -e .

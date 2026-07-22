@@ -6,42 +6,29 @@ Location:
 
 Purpose:
     Provides a concrete implementation of the LLM interface that communicates
-    with a locally running Ollama server.
+    with a locally running Ollama server using LangChain.
 """
 
-import httpx
+from langchain_ollama import OllamaLLM as LangChainOllamaLLM
 
 from .llm import LLM
 
 
 class OllamaLLM(LLM):
-    """LLM implementation that communicates with an Ollama server."""
+    """Adapter between the application and a LangChain Ollama model."""
 
-    def __init__(
-        self,
-        model: str,
-        base_url: str = "http://localhost:11434",
-    ) -> None:
-        self.model = model
-        self.base_url = base_url
+    def __init__(self, llm: LangChainOllamaLLM) -> None:
+        """
+        Initialize the adapter.
+
+        Parameters
+        ----------
+        llm : LangChainOllamaLLM
+            A configured LangChain Ollama model.
+        """
+        self._llm = llm
 
     def invoke(self, prompt: str) -> str:
-        """Generate a response using an Ollama model."""
+        """Generate a response using the configured LangChain model."""
 
-        payload = {
-            "model": self.model,
-            "prompt": prompt,
-            "stream": False,
-        }
-
-        response = httpx.post(
-            f"{self.base_url}/api/generate",
-            json=payload,
-            timeout=180.0,
-        )
-
-        response.raise_for_status()
-
-        data = response.json()
-
-        return data["response"]
+        return self._llm.invoke(prompt)

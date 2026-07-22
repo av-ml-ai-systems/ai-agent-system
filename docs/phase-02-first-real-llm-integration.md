@@ -1002,3 +1002,1058 @@ The Agent remains independent from infrastructure concerns while `OllamaLLM` pro
 
 This architectural foundation prepares the project for the next step: introducing LangChain while preserving the existing architecture and design principles.
 ```
+
+# Phase 2.4 — Introduce LangChain
+
+## Objective
+
+Integrate LangChain into the AI Agent System while maintaining the existing software architecture principles.
+
+The goal is not to make the Agent depend directly on LangChain, but to use LangChain as an external framework that simplifies interaction with language models.
+
+---
+
+## Previous Architecture (Before LangChain)
+
+Before introducing LangChain, the project communicated directly with Ollama through HTTP requests.
+
+```
+Agent
+  ↓
+LLM Interface
+  ↓
+OllamaLLM Adapter
+  ↓
+Ollama API
+  ↓
+Qwen3 Model
+```
+
+The `OllamaLLM` adapter was responsible for:
+
+- Building the HTTP request.
+- Sending the request to Ollama.
+- Parsing the response.
+- Returning the generated text.
+
+This approach works, but it requires implementing and maintaining provider-specific communication logic.
+
+---
+
+## Why Introduce LangChain?
+
+LangChain provides abstractions and integrations for working with different language model providers.
+
+It allows the project to:
+
+- Use standardized LLM interfaces.
+- Switch between providers more easily.
+- Avoid implementing low-level API communication.
+- Prepare the system for more advanced agent workflows.
+
+Examples of possible future integrations:
+
+- Ollama (local models).
+- OpenAI models.
+- Google Gemini.
+- Anthropic Claude.
+- Other LangChain-compatible providers.
+
+---
+
+## New Architecture with LangChain
+
+After introducing LangChain:
+
+```
+Agent
+  ↓
+LLM Interface
+  ↓
+OllamaLLM Adapter
+  ↓
+LangChain Ollama Model
+  ↓
+Ollama API
+  ↓
+Qwen3 Model
+```
+
+The Agent architecture remains unchanged.
+
+The Agent still depends only on the internal `LLM` interface.
+
+LangChain is isolated behind the adapter layer.
+
+---
+
+## Implementation
+
+A new dependency was added:
+
+```
+langchain
+langchain-ollama
+```
+
+The project now uses:
+
+```
+src/ai_agent_system/ollama_llm.py
+```
+
+as an adapter between the internal architecture and LangChain.
+
+Responsibilities:
+
+- Receive a LangChain Ollama model.
+- Expose the internal `LLM` interface.
+- Translate application requests into LangChain calls.
+
+---
+
+## Important Design Principle
+
+The Agent does not know that LangChain exists.
+
+The dependency direction is:
+
+```
+Application Layer
+        ↓
+Internal Abstraction
+        ↓
+External Framework Adapter
+        ↓
+External Service
+```
+
+This follows the Dependency Inversion Principle:
+
+High-level components should depend on abstractions, not concrete implementations.
+
+---
+
+# Phase 2.5 — Dependency Injection and Adapter Pattern
+
+## Objective
+
+Improve the architecture by separating object creation from object usage.
+
+The goal is to make components easier to replace, test, and extend.
+
+---
+
+## Problem Before Refactoring
+
+Initially, `OllamaLLM` created its own LangChain dependency.
+
+Example:
+
+```
+OllamaLLM
+    |
+    └── creates LangChain Ollama model
+```
+
+This created two responsibilities:
+
+1. Creating the LangChain model.
+2. Using the LangChain model.
+
+A class should ideally have one clear responsibility.
+
+---
+
+## Refactored Design
+
+After applying Dependency Injection:
+
+```
+Application
+    |
+    | creates
+    ↓
+LangChain Ollama Model
+    |
+    | injects
+    ↓
+OllamaLLM Adapter
+    |
+    ↓
+LLM Interface
+    |
+    ↓
+Agent
+```
+
+Now:
+
+- The application creates dependencies.
+- The adapter uses the dependency.
+- The Agent only consumes the abstraction.
+
+---
+
+## Dependency Injection Concept
+
+Dependency Injection means that an object receives the dependencies it needs from outside instead of creating them internally.
+
+Before:
+
+```
+Class
+ |
+ └── creates dependency
+```
+
+After:
+
+```
+External component
+ |
+ └── provides dependency
+        |
+        ↓
+      Class
+```
+
+Benefits:
+
+- Easier testing.
+- Lower coupling.
+- Easier replacement of implementations.
+- Better maintainability.
+
+---
+
+## Composition Root
+
+The place where dependencies are created and connected is called the Composition Root.
+
+Currently:
+
+```
+examples/agent_demo.py
+```
+
+acts as the composition root.
+
+It creates:
+
+- LangChain Ollama model.
+- OllamaLLM adapter.
+- Agent.
+
+Example flow:
+
+```
+agent_demo.py
+
+creates LangChain model
+
+        ↓
+
+creates OllamaLLM adapter
+
+        ↓
+
+creates Agent
+
+        ↓
+
+executes request
+```
+
+Later, this responsibility can move to a dedicated application factory or dependency container.
+
+---
+
+## Current Architecture After Phase 2.5
+
+```
+examples/agent_demo.py
+        |
+        ↓
+LangChain Ollama Model
+        |
+        ↓
+OllamaLLM Adapter
+        |
+        ↓
+LLM Interface
+        |
+        ↓
+Agent
+        |
+        ↓
+User Request
+```
+
+---
+
+## Key Lessons Learned
+
+### 1. Abstractions protect the system from change
+
+The Agent depends on the `LLM` contract, not on Ollama or LangChain.
+
+---
+
+### 2. Frameworks should stay at the edges
+
+LangChain is useful, but it should not dominate the internal architecture.
+
+---
+
+### 3. Adapters isolate external technologies
+
+`OllamaLLM` translates between:
+
+- Internal application design.
+- LangChain implementation details.
+
+---
+
+### 4. Dependency Injection improves flexibility
+
+Dependencies are provided from outside, allowing components to be replaced without modifying the core system.
+
+---
+
+## Validation
+
+The following tests were executed successfully:
+
+```
+pytest tests/integration/test_ollama_llm.py -v
+
+1 passed
+```
+
+and:
+
+```
+pre-commit run --all-files
+
+ruff      Passed
+mypy      Passed
+pytest    Passed
+```
+
+The system successfully generates responses using:
+
+```
+Agent
+ ↓
+LLM Interface
+ ↓
+OllamaLLM Adapter
+ ↓
+LangChain Ollama
+ ↓
+Qwen3 Model
+```
+# Phase 2.4 — Introduce LangChain
+
+## Objective
+
+Integrate LangChain into the AI Agent System while maintaining the existing software architecture principles.
+
+The goal is not to make the Agent depend directly on LangChain, but to use LangChain as an external framework that simplifies interaction with language models.
+
+---
+
+## Previous Architecture (Before LangChain)
+
+Before introducing LangChain, the project communicated directly with Ollama through HTTP requests.
+
+```text
+Agent
+  ↓
+LLM Interface
+  ↓
+OllamaLLM Adapter
+  ↓
+Ollama API
+  ↓
+Qwen3 Model
+```
+
+The `OllamaLLM` adapter was responsible for:
+
+- Building the HTTP request.
+- Sending the request to Ollama.
+- Parsing the response.
+- Returning the generated text.
+
+This approach works, but it requires implementing and maintaining provider-specific communication logic.
+
+---
+
+## Why Introduce LangChain?
+
+LangChain provides abstractions and integrations for working with different language model providers.
+
+It allows the project to:
+
+- Use standardized LLM interfaces.
+- Switch between providers more easily.
+- Avoid implementing low-level API communication.
+- Prepare the system for more advanced agent workflows.
+
+Examples of possible future integrations:
+
+- Ollama (local models).
+- OpenAI models.
+- Google Gemini.
+- Anthropic Claude.
+- Other LangChain-compatible providers.
+
+---
+
+## New Architecture with LangChain
+
+After introducing LangChain:
+
+```text
+Agent
+  ↓
+LLM Interface
+  ↓
+OllamaLLM Adapter
+  ↓
+LangChain Ollama Model
+  ↓
+Ollama API
+  ↓
+Qwen3 Model
+```
+
+The Agent architecture remains unchanged.
+
+The Agent still depends only on the internal `LLM` interface.
+
+LangChain is isolated behind the adapter layer.
+
+---
+
+## Implementation
+
+A new dependency was added:
+
+```text
+langchain
+langchain-ollama
+```
+
+The project now uses:
+
+```text
+src/ai_agent_system/ollama_llm.py
+```
+
+as an adapter between the internal architecture and LangChain.
+
+Responsibilities:
+
+- Receive a LangChain Ollama model.
+- Expose the internal `LLM` interface.
+- Translate application requests into LangChain calls.
+
+---
+
+## Important Design Principle
+
+The Agent does not know that LangChain exists.
+
+The dependency direction is:
+
+```text
+Application Layer
+        ↓
+Internal Abstraction
+        ↓
+External Framework Adapter
+        ↓
+External Service
+```
+
+This follows the Dependency Inversion Principle:
+
+High-level components should depend on abstractions, not concrete implementations.
+
+---
+
+# Phase 2.5 — Dependency Injection and Adapter Pattern
+
+## Objective
+
+Improve the architecture by separating object creation from object usage.
+
+The goal is to make components easier to replace, test, and extend.
+
+---
+
+## Problem Before Refactoring
+
+Initially, `OllamaLLM` created its own LangChain dependency.
+
+Example:
+
+```text
+OllamaLLM
+    |
+    └── creates LangChain Ollama model
+```
+
+This created two responsibilities:
+
+1. Creating the LangChain model.
+2. Using the LangChain model.
+
+A class should ideally have one clear responsibility.
+
+---
+
+## Refactored Design
+
+After applying Dependency Injection:
+
+```text
+Application
+    |
+    | creates
+    ↓
+LangChain Ollama Model
+    |
+    | injects
+    ↓
+OllamaLLM Adapter
+    |
+    ↓
+LLM Interface
+    |
+    ↓
+Agent
+```
+
+Now:
+
+- The application creates dependencies.
+- The adapter uses the dependency.
+- The Agent only consumes the abstraction.
+
+---
+
+## Dependency Injection Concept
+
+Dependency Injection means that an object receives the dependencies it needs from outside instead of creating them internally.
+
+Before:
+
+```text
+Class
+ |
+ └── creates dependency
+```
+
+After:
+
+```text
+External component
+ |
+ └── provides dependency
+        |
+        ↓
+      Class
+```
+
+Benefits:
+
+- Easier testing.
+- Lower coupling.
+- Easier replacement of implementations.
+- Better maintainability.
+
+---
+
+## Composition Root
+
+The place where dependencies are created and connected is called the Composition Root.
+
+Currently:
+
+```text
+examples/agent_demo.py
+```
+
+acts as the composition root.
+
+It creates:
+
+- LangChain Ollama model.
+- OllamaLLM adapter.
+- Agent.
+
+Example flow:
+
+```text
+agent_demo.py
+
+creates LangChain model
+
+        ↓
+
+creates OllamaLLM adapter
+
+        ↓
+
+creates Agent
+
+        ↓
+
+executes request
+```
+
+Later, this responsibility can move to a dedicated application factory or dependency container.
+
+---
+
+## Current Architecture After Phase 2.5
+
+```text
+examples/agent_demo.py
+        |
+        ↓
+LangChain Ollama Model
+        |
+        ↓
+OllamaLLM Adapter
+        |
+        ↓
+LLM Interface
+        |
+        ↓
+Agent
+        |
+        ↓
+User Request
+```
+
+---
+
+## Key Lessons Learned
+
+### 1. Abstractions protect the system from change
+
+The Agent depends on the `LLM` contract, not on Ollama or LangChain.
+
+---
+
+### 2. Frameworks should stay at the edges
+
+LangChain is useful, but it should not dominate the internal architecture.
+
+---
+
+### 3. Adapters isolate external technologies
+
+`OllamaLLM` translates between:
+
+- Internal application design.
+- LangChain implementation details.
+
+---
+
+### 4. Dependency Injection improves flexibility
+
+Dependencies are provided from outside, allowing components to be replaced without modifying the core system.
+
+---
+
+## Validation
+
+The following tests were executed successfully:
+
+```text
+pytest tests/integration/test_ollama_llm.py -v
+
+1 passed
+```
+
+and:
+
+```text
+pre-commit run --all-files
+
+ruff      Passed
+mypy      Passed
+pytest    Passed
+```
+
+The system successfully generates responses using:
+
+```text
+Agent
+ ↓
+LLM Interface
+ ↓
+OllamaLLM Adapter
+ ↓
+LangChain Ollama
+ ↓
+Qwen3 Model
+```
+
+# Phase 2.4 — Introduce LangChain
+
+## Objective
+
+Integrate LangChain into the AI Agent System while maintaining the existing software architecture principles.
+
+The goal is not to make the Agent depend directly on LangChain, but to use LangChain as an external framework that simplifies interaction with language models.
+
+---
+
+## Previous Architecture (Before LangChain)
+
+Before introducing LangChain, the project communicated directly with Ollama through HTTP requests.
+
+```
+Agent
+ ↓
+LLM Interface
+ ↓
+OllamaLLM Adapter
+ ↓
+Ollama API
+ ↓
+Qwen3 Model
+```
+
+The `OllamaLLM` adapter was responsible for:
+
+- Building HTTP requests.
+- Sending requests to Ollama.
+- Parsing responses.
+- Returning generated text.
+
+This approach works, but it requires implementing and maintaining provider-specific communication logic.
+
+---
+
+## Why Introduce LangChain?
+
+LangChain provides abstractions and integrations for working with different language model providers.
+
+It allows the project to:
+
+- Use standardized LLM interfaces.
+- Switch between providers more easily.
+- Avoid implementing low-level API communication.
+- Prepare the system for more advanced agent workflows.
+
+Possible future integrations:
+
+- Ollama local models.
+- OpenAI models.
+- Google Gemini.
+- Anthropic Claude.
+- Other LangChain-compatible providers.
+
+---
+
+## New Architecture with LangChain
+
+After introducing LangChain:
+
+```
+Agent
+ ↓
+LLM Interface
+ ↓
+OllamaLLM Adapter
+ ↓
+LangChain Ollama Model
+ ↓
+Ollama API
+ ↓
+Qwen3 Model
+```
+
+The Agent architecture remains unchanged.
+
+The Agent still depends only on the internal `LLM` interface.
+
+LangChain is isolated behind the adapter layer.
+
+---
+
+## Implementation
+
+New dependencies were added:
+
+```
+langchain
+langchain-ollama
+```
+
+The project now uses:
+
+```
+src/ai_agent_system/ollama_llm.py
+```
+
+as an adapter between the internal architecture and LangChain.
+
+Responsibilities:
+
+- Receive a LangChain Ollama model.
+- Expose the internal `LLM` interface.
+- Translate application requests into LangChain calls.
+
+---
+
+## Important Design Principle
+
+The Agent does not know that LangChain exists.
+
+The dependency direction is:
+
+```
+Application Layer
+        ↓
+Internal Abstraction
+        ↓
+External Framework Adapter
+        ↓
+External Service
+```
+
+This follows the Dependency Inversion Principle:
+
+High-level components should depend on abstractions, not concrete implementations.
+
+---
+
+# Phase 2.5 — Dependency Injection and Adapter Pattern
+
+## Objective
+
+Improve the architecture by separating object creation from object usage.
+
+The goal is to make components easier to replace, test, and extend.
+
+---
+
+## Problem Before Refactoring
+
+Initially, `OllamaLLM` created its own LangChain dependency.
+
+Example:
+
+```
+OllamaLLM
+    |
+    └── creates LangChain Ollama model
+```
+
+This created two responsibilities:
+
+1. Creating the LangChain model.
+2. Using the LangChain model.
+
+A class should ideally have one clear responsibility.
+
+---
+
+## Refactored Design
+
+After applying Dependency Injection:
+
+```
+Application
+    |
+    | creates
+    ↓
+LangChain Ollama Model
+    |
+    | injects
+    ↓
+OllamaLLM Adapter
+    |
+    ↓
+LLM Interface
+    |
+    ↓
+Agent
+```
+
+Now:
+
+- The application creates dependencies.
+- The adapter uses the dependency.
+- The Agent only consumes the abstraction.
+
+---
+
+## Dependency Injection Concept
+
+Dependency Injection means that an object receives the dependencies it needs from outside instead of creating them internally.
+
+Before:
+
+```
+Class
+ |
+ └── creates dependency
+```
+
+After:
+
+```
+External component
+ |
+ └── provides dependency
+        |
+        ↓
+      Class
+```
+
+Benefits:
+
+- Easier testing.
+- Lower coupling.
+- Easier replacement of implementations.
+- Better maintainability.
+
+---
+
+## Composition Root
+
+The place where dependencies are created and connected is called the Composition Root.
+
+Currently:
+
+```
+examples/agent_demo.py
+```
+
+acts as the composition root.
+
+It creates:
+
+- LangChain Ollama model.
+- OllamaLLM adapter.
+- Agent.
+
+Example flow:
+
+```
+agent_demo.py
+
+creates LangChain model
+
+        ↓
+
+creates OllamaLLM adapter
+
+        ↓
+
+creates Agent
+
+        ↓
+
+executes request
+```
+
+Later, this responsibility can move to a dedicated application factory or dependency container.
+
+---
+
+## Current Architecture After Phase 2.5
+
+```
+examples/agent_demo.py
+        |
+        ↓
+LangChain Ollama Model
+        |
+        ↓
+OllamaLLM Adapter
+        |
+        ↓
+LLM Interface
+        |
+        ↓
+Agent
+        |
+        ↓
+User Request
+```
+
+---
+
+## Key Lessons Learned
+
+### 1. Abstractions protect the system from change
+
+The Agent depends on the `LLM` contract, not on Ollama or LangChain.
+
+---
+
+### 2. Frameworks should stay at the edges
+
+LangChain is useful, but it should not dominate the internal architecture.
+
+---
+
+### 3. Adapters isolate external technologies
+
+`OllamaLLM` translates between:
+
+- Internal application design.
+- LangChain implementation details.
+
+---
+
+### 4. Dependency Injection improves flexibility
+
+Dependencies are provided from outside, allowing components to be replaced without modifying the core system.
+
+---
+
+## Validation
+
+The following tests were executed successfully:
+
+```
+pytest tests/integration/test_ollama_llm.py -v
+
+1 passed
+```
+
+and:
+
+```
+pre-commit run --all-files
+
+ruff      Passed
+mypy      Passed
+pytest    Passed
+```
+
+The system successfully generates responses using:
+
+```
+Agent
+ ↓
+LLM Interface
+ ↓
+OllamaLLM Adapter
+ ↓
+LangChain Ollama
+ ↓
+Qwen3 Model
+```

@@ -78,6 +78,69 @@ Pre-commit
 🟢 Understand mocking and test doubles.
 🟢 Build confidence before integrating a real LLM.
 
+🟡 Phase 2 — First Real LLM Integration
+2.1 — LLM Integration Foundations
+
+⬜ Review the current LLM abstraction.
+⬜ Understand LLM interfaces, implementations, and providers.
+⬜ Identify where the real LLM enters the architecture.
+⬜ Apply dependency inversion principles.
+⬜ Preserve separation between Agent logic and infrastructure.
+
+2.2 — Introduce Ollama
+
+⬜ Understand Ollama architecture.
+⬜ Install and configure Ollama.
+⬜ Download and manage a local LLM model.
+⬜ Execute the first local inference.
+⬜ Understand local model resource requirements.
+
+2.3 — Create the First Real LLM Adapter
+
+⬜ Create an Ollama-based LLM implementation.
+⬜ Connect Ollama to the existing LLM abstraction.
+⬜ Apply the Adapter Pattern.
+⬜ Use dependency injection with the new implementation.
+⬜ Keep the Agent independent from Ollama.
+
+2.4 — Introduce LangChain
+
+⬜ Understand why LangChain exists.
+⬜ Introduce LangChain models.
+⬜ Introduce LangChain message handling.
+⬜ Connect LangChain with Ollama.
+⬜ Understand LangChain responsibilities and limitations.
+
+2.5 — Refactor the LLM Layer
+
+⬜ Integrate LangChain without changing the Agent interface.
+⬜ Separate application logic from LLM infrastructure.
+⬜ Maintain interchangeable LLM implementations.
+⬜ Update the architecture documentation.
+
+2.6 — First Real Conversation
+
+⬜ Connect the Agent to a real local LLM.
+⬜ Execute the first real conversation.
+⬜ Observe the complete request-response flow.
+⬜ Document the new architecture milestone.
+
+2.7 — Phase 2 Validation
+
+⬜ Validate with Ruff.
+⬜ Validate with MyPy.
+⬜ Validate with Pytest.
+⬜ Keep FakeLLM tests working.
+⬜ Add integration testing strategy.
+
+2.8 — Phase 2 Architectural Checkpoint
+
+⬜ Document the real LLM integration.
+⬜ Document Ollama integration.
+⬜ Document LangChain integration.
+⬜ Review architectural decisions.
+⬜ Prepare for prompt engineering phase.
+
 ⬜ Phase 2 — First Real LLM Integration
 
 ⬜ Introduce Ollama.

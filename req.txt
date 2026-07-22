@@ -71,6 +71,8 @@ After reboot:
 
 conda activate agent_env
 
+uv sync --group dev
+
 uv pip install --group dev
 
 uv pip install -e .
@@ -105,3 +107,10 @@ ruff --version
 uv add --dev pytest
 
 uv add --dev pre-commit
+
+uv pip install setuptools
+
+ollama pull qwen3:4b
+
+uv add httpx
+pre-commit run --all-files

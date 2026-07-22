@@ -1,0 +1,123 @@
+==================================================================
+Standard Environment Workflow (AI Agent System)
+==================================================================
+
+1. Activate the Conda Environment
+----------------------------------------------------------
+
+conda activate agent_env
+
+
+2. Configure UV Environment
+----------------------------------------------------------
+
+UV must use the active Conda environment.
+
+Set:
+
+$env:UV_PROJECT_ENVIRONMENT = $env:CONDA_PREFIX
+
+Verify:
+
+echo $env:UV_PROJECT_ENVIRONMENT
+
+Expected:
+
+C:\Users\User\anaconda3\envs\agent_env
+
+This tells UV:
+
+"Use the active Conda environment as the project environment."
+
+
+3. Restore Project Dependencies
+----------------------------------------------------------
+
+After reboot or environment recreation:
+
+Activate:
+
+conda activate agent_env
+
+Configure UV:
+
+$env:UV_PROJECT_ENVIRONMENT = $env:CONDA_PREFIX
+
+Restore dependencies:
+
+uv sync --group dev
+
+This synchronizes the environment using:
+
+- pyproject.toml
+- uv.lock
+
+UV will install any missing dependencies and ensure the environment matches the project's lock file.
+
+
+4. Verify the Environment
+----------------------------------------------------------
+
+Verify installed packages:
+
+uv pip list
+
+View the project dependency tree:
+
+uv tree
+
+Verify development tools:
+
+ruff --version
+mypy --version
+pytest --version
+pre-commit --version
+
+
+5. Daily Development Workflow
+----------------------------------------------------------
+
+Add a runtime dependency:
+
+uv add <package>
+
+Example:
+
+uv add langchain
+
+Add a development dependency:
+
+uv add --dev <package>
+
+Example:
+
+uv add --dev pytest
+
+UV automatically updates:
+
+- pyproject.toml
+- uv.lock
+
+
+6. Engineering Principles
+----------------------------------------------------------
+
+- Conda manages the Python environment.
+- UV manages project dependencies.
+- pyproject.toml is the project's source of truth.
+- uv.lock guarantees reproducible environments.
+- Always synchronize dependencies with:
+
+    uv sync --group dev
+
+- Never install project dependencies manually with pip.
+- Verify the environment after synchronization before starting development.
+
+Environment Health Check
+
+python --version
+uv pip list
+ruff --version
+mypy --version
+pytest --version
+pre-commit --version

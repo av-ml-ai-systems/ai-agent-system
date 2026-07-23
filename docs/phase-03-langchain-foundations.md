@@ -1043,3 +1043,1367 @@ For this educational project:
 - Composition improves separation of responsibilities.
 - Chains and LCEL are based on this composition principle.
 - Our project architecture already follows this idea.
+
+---
+
+# Phase 3.3 — Chains
+
+## Objective
+
+Understand how LangChain connects components together.
+
+The goal is not to build complex workflows or advanced agent architectures.
+
+The goal is to understand the mechanism LangChain provides to compose smaller components into an LLM application pipeline.
+
+---
+
+# Why Chains Exist
+
+An LLM application usually requires multiple steps.
+
+For example:
+
+- Create a prompt.
+- Send the prompt to a model.
+- Process the response.
+
+Without a composition mechanism, the application code may become responsible for manually connecting every component.
+
+Example:
+
+```
+Application
+
+↓
+
+Create Messages
+
+↓
+
+Call Model
+
+↓
+
+Process Response
+```
+
+As applications grow, manually managing these interactions can become harder to maintain.
+
+LangChain introduces Chains to make component composition explicit.
+
+---
+
+# What Is a Chain?
+
+A Chain is a sequence of connected components where the output of one component becomes the input of another component.
+
+Conceptually:
+
+```
+Component A
+
+↓
+
+Component B
+
+↓
+
+Component C
+```
+
+For an LLM application:
+
+```
+Prompt
+
+↓
+
+Chat Model
+
+↓
+
+Response
+```
+
+Each component has a specific responsibility.
+
+The Chain coordinates the data flow between them.
+
+---
+
+# Relationship With Previous Architecture
+
+Before Chains:
+
+```
+Agent
+
+↓
+
+PromptTemplate
+
+↓
+
+ChatModel
+
+↓
+
+Response
+```
+
+The Agent manually coordinates the interaction between the prompt and the model.
+
+After introducing Chains:
+
+```
+Agent
+
+↓
+
+Chain
+
+↓
+
+Prompt
+
+↓
+
+ChatModel
+
+↓
+
+Response
+```
+
+The Chain becomes responsible for connecting components.
+
+The Agent remains responsible for high-level coordination.
+
+---
+
+# Important Design Principle
+
+Chains do not replace good software architecture.
+
+They are a composition mechanism.
+
+A poorly designed application can still become complex even when using Chains.
+
+The goal is to use abstractions only when they improve clarity.
+
+For this educational project:
+
+- We learn Chains.
+- We understand their purpose.
+- We use them in a simple example.
+- We avoid unnecessary layers.
+
+---
+
+# Connection With Composition
+
+Chains are based on the idea of composition.
+
+Instead of creating one large component:
+
+```
+Agent
+
+├── Prompt logic
+├── Model logic
+├── Processing logic
+└── Response logic
+```
+
+we combine smaller components:
+
+```
+Prompt
+
++
+
+Chat Model
+
++
+
+Processing Step
+
+=
+
+Application Workflow
+```
+
+This improves separation of responsibilities.
+
+---
+
+# Preparation for LCEL
+
+LangChain Expression Language (LCEL) is the syntax and system used by LangChain to compose runnable components.
+
+LCEL allows developers to express workflows by connecting components together.
+
+Conceptually:
+
+```
+Prompt
+
+↓
+
+Model
+
+↓
+
+Output
+```
+
+Later, we will implement this using LangChain's Runnable system.
+
+---
+
+# Key Learning Objectives
+
+By the end of Phase 3.3, we should understand:
+
+- Why LangChain uses Chains.
+- How components are composed.
+- What LCEL represents.
+- How data flows through a chain.
+- The difference between a direct model call and a composed pipeline.
+- When composition improves clarity.
+
+---
+
+# Scope Limitations
+
+This project will not include:
+
+- Complex chain architectures.
+- Multiple nested chains.
+- Production workflow orchestration.
+- Advanced LangChain features.
+
+Those concepts belong to larger AI system projects.
+
+The objective here is to understand the foundation.
+
+---
+
+---
+
+# Session 1 — LCEL Fundamentals
+
+## Objective
+
+Understand the purpose of LangChain Expression Language (LCEL) and how it enables component composition in LangChain applications.
+
+The objective is not to memorize syntax.
+
+The objective is to understand the architectural idea behind LCEL:
+
+> Connecting independent components into a workflow.
+
+---
+
+# Why LCEL Exists
+
+LLM applications usually require multiple steps.
+
+For example:
+
+```
+User Input
+
+↓
+
+Create Prompt
+
+↓
+
+Generate Messages
+
+↓
+
+Call Model
+
+↓
+
+Process Response
+```
+
+In a simple application, these steps can be manually implemented.
+
+However, as applications grow, manually connecting components can make the code harder to maintain.
+
+The developer becomes responsible for managing:
+
+- data flow,
+- component interaction,
+- execution order,
+- intermediate results.
+
+LangChain introduced LCEL to make these connections explicit and easier to compose.
+
+---
+
+# What Is LCEL?
+
+LCEL stands for:
+
+**LangChain Expression Language**
+
+LCEL is a way to compose LangChain components into runnable workflows.
+
+Instead of manually orchestrating every step, components can be connected together.
+
+Conceptually:
+
+```
+Component A
+
+↓
+
+Component B
+
+↓
+
+Component C
+```
+
+The output of one component becomes the input of the next component.
+
+---
+
+# Runnable Concept
+
+LCEL is based on the concept of **Runnable components**.
+
+A Runnable is a component that receives an input and produces an output.
+
+Conceptually:
+
+```
+Input
+
+↓
+
+Runnable
+
+↓
+
+Output
+```
+
+Examples of LangChain components that can behave as Runnables:
+
+- Prompt templates.
+- Chat models.
+- Output parsers.
+- Other processing components.
+
+Because these components follow a common interface, they can be composed together.
+
+---
+
+# Component Composition
+
+The main idea behind LCEL is composition.
+
+Instead of creating one large component:
+
+```
+Agent
+
+├── Prompt creation
+├── Model communication
+├── Response processing
+└── Workflow logic
+```
+
+LangChain encourages combining smaller components:
+
+```
+Prompt
+
++
+
+Chat Model
+
++
+
+Output Processing
+
+=
+
+Application Workflow
+```
+
+Each component maintains a clear responsibility.
+
+---
+
+# Pipe Operator
+
+LCEL commonly uses the pipe operator:
+
+```
+|
+```
+
+The meaning is:
+
+> The output of one component becomes the input of the next component.
+
+Conceptually:
+
+```
+Component A
+
+|
+
+Component B
+```
+
+represents:
+
+```
+Input
+
+↓
+
+Component A
+
+↓
+
+Component B
+
+↓
+
+Output
+```
+
+The pipe operator makes the workflow structure visible.
+
+---
+
+# Prompt → Model Pipeline
+
+A basic LLM workflow can be represented as:
+
+```
+Prompt
+
+↓
+
+Chat Model
+
+↓
+
+Response
+```
+
+The execution flow is:
+
+1. The prompt receives application data.
+2. The prompt creates the required messages.
+3. The chat model receives those messages.
+4. The model generates a response.
+
+---
+
+# Relationship With Our Agent Architecture
+
+Before introducing Chains:
+
+```
+Agent
+
+↓
+
+PromptTemplate
+
+↓
+
+ChatModel
+
+↓
+
+Response
+```
+
+The Agent coordinates the interaction.
+
+After introducing Chains:
+
+```
+Agent
+
+↓
+
+Chain
+
+↓
+
+Prompt
+
+↓
+
+ChatModel
+
+↓
+
+Response
+```
+
+The Chain becomes responsible for connecting components.
+
+The Agent remains responsible for high-level coordination.
+
+---
+
+# LCEL Does Not Create an Agent
+
+Important distinction:
+
+LCEL is a composition mechanism.
+
+It does not provide:
+
+- decision making,
+- tools,
+- reasoning,
+- memory,
+- autonomous behavior.
+
+Those concepts belong to later phases.
+
+An Agent requires additional capabilities beyond a chain.
+
+---
+
+# Relationship Between Chains and LCEL
+
+Chains in modern LangChain applications are commonly built using LCEL.
+
+LCEL provides the mechanism to connect:
+
+- prompts,
+- models,
+- parsers,
+- other runnable components.
+
+A Chain represents the composed workflow.
+
+---
+
+# Engineering Concepts
+
+## Separation of Concerns
+
+Each component focuses on one responsibility.
+
+Example:
+
+```
+Prompt
+
+Responsible for:
+
+- Instructions
+- Message creation
+```
+
+```
+Chat Model
+
+Responsible for:
+
+- Communication with the LLM
+```
+
+---
+
+## Composition
+
+Complex behavior is created by combining smaller components.
+
+Instead of increasing the complexity of individual classes, functionality is created through connections between components.
+
+---
+
+## Dependency Management
+
+LangChain components can be replaced or modified because the application depends on clear interfaces.
+
+---
+
+# Key Takeaways
+
+- LCEL is LangChain's composition language.
+- LCEL connects runnable components into workflows.
+- A Runnable receives input and produces output.
+- The pipe operator represents component composition.
+- Chains are created by composing components.
+- LCEL improves readability and separation of responsibilities.
+- LCEL is not an Agent framework; it is a workflow composition mechanism.
+
+---
+
+# Phase 3.3 Scope Reminder
+
+For this educational project:
+
+We will use LCEL to understand:
+
+- component composition,
+- prompt-model pipelines,
+- simple chains.
+
+We will not build:
+
+- complex chain architectures,
+- workflow engines,
+- enterprise orchestration systems.
+
+The objective is understanding, not creating a framework.
+
+---
+
+---
+
+# Session 2 — Prompt → Model Pipeline Implementation
+
+## Objective
+
+Implement a small educational example to demonstrate how LangChain Expression Language (LCEL) connects components together.
+
+The goal is not to modify the Agent architecture.
+
+The goal is to observe how independent LangChain components can be composed into a simple workflow.
+
+---
+
+# What We Implemented
+
+A simple LCEL pipeline was created:
+
+```
+ChatPromptTemplate
+
+↓
+
+ChatOllama
+
+↓
+
+Response
+```
+
+The implementation uses:
+
+- `ChatPromptTemplate` to create messages.
+- `ChatOllama` to communicate with the local LLM.
+- LCEL composition to connect both components.
+
+The execution flow is:
+
+```
+User Input
+
+↓
+
+Prompt Template
+
+↓
+
+Messages
+
+↓
+
+Chat Model
+
+↓
+
+AIMessage
+
+↓
+
+Response
+```
+
+---
+
+# LCEL Composition
+
+The central concept demonstrated is component composition.
+
+The pipeline connects components using:
+
+```
+Prompt | Model
+```
+
+The meaning is:
+
+"The output generated by the first component becomes the input of the next component."
+
+In this example:
+
+```
+ChatPromptTemplate
+
+↓
+
+ChatOllama
+```
+
+The prompt receives the user input and generates the required messages.
+
+The chat model receives those messages and generates the response.
+
+---
+
+# Why This Example Is Isolated
+
+This example was intentionally created as a standalone learning artifact.
+
+It does not modify the main Agent implementation.
+
+Reason:
+
+The objective of this session is to understand LCEL composition, not to redesign the application architecture.
+
+The example focuses only on:
+
+- LangChain components.
+- Runnable composition.
+- Data flow between components.
+
+---
+
+# Relationship With Main Agent Architecture
+
+The main project architecture remains:
+
+```
+Agent
+
+↓
+
+PromptTemplate
+
+↓
+
+Conversation
+
+↓
+
+ChatModel
+
+↓
+
+Ollama
+```
+
+The Agent architecture focuses on software engineering principles:
+
+- Separation of responsibilities.
+- Dependency inversion.
+- Testability.
+- Clear component boundaries.
+
+---
+
+The LCEL example focuses on LangChain composition:
+
+```
+ChatPromptTemplate
+
+↓
+
+ChatOllama
+
+↓
+
+Response
+```
+
+It demonstrates how LangChain connects framework components.
+
+---
+
+# Why We Do Not Replace the Agent With LCEL Yet
+
+Replacing the current architecture with an LCEL-based design would introduce a different learning objective:
+
+- Architecture redesign.
+- Responsibility changes.
+- New abstractions.
+- Additional testing requirements.
+
+That is not required to understand LCEL.
+
+The current architecture already provides a strong foundation for learning LangChain.
+
+---
+
+# Engineering Concepts Applied
+
+## Composition
+
+Small independent components are combined to create a workflow.
+
+Example:
+
+```
+Prompt
+
++
+
+Model
+
+=
+
+LLM Pipeline
+```
+
+---
+
+## Separation of Concerns
+
+Each component has a specific responsibility:
+
+### Prompt
+
+Responsible for:
+
+- Instructions.
+- Message formatting.
+- Input transformation.
+
+### Model
+
+Responsible for:
+
+- LLM communication.
+- Response generation.
+
+---
+
+## Abstraction Boundaries
+
+The project maintains two learning perspectives:
+
+Application architecture:
+
+```
+Agent → Abstractions → Implementations
+```
+
+Framework composition:
+
+```
+LangChain Components → LCEL Pipeline
+```
+
+Both concepts are valuable and serve different purposes.
+
+---
+
+# Validation
+
+Completed:
+
+🟢 LCEL example execution
+
+🟢 Ollama integration validation
+
+🟢 Pre-commit validation
+
+---
+
+# Key Takeaways
+
+- LCEL allows LangChain components to be composed into workflows.
+- Prompts and models can be connected through a pipeline.
+- The pipe operator represents data flow between components.
+- A Chain is a composition of runnable components.
+- LCEL is not the same as an Agent.
+- Learning framework capabilities does not require redesigning the application architecture.
+
+---
+
+---
+
+# Session 3 — RunnableSequence
+
+## Objective
+
+Understand how LangChain represents sequences of connected operations.
+
+The goal is to understand:
+
+- What a RunnableSequence is.
+- How RunnableSequence relates to LCEL.
+- How multiple components can be executed in order.
+- The difference between deterministic workflows and Agents.
+
+---
+
+# What Is RunnableSequence?
+
+A `RunnableSequence` represents a workflow where multiple runnable components are executed sequentially.
+
+Each component receives the output from the previous component as its input.
+
+Conceptually:
+
+```
+Runnable A
+
+↓
+
+Runnable B
+
+↓
+
+Runnable C
+```
+
+The sequence defines:
+
+- execution order,
+- data flow,
+- component connection.
+
+---
+
+# Relationship With LCEL
+
+LCEL allows developers to compose runnable components.
+
+When using the pipe operator:
+
+```
+Component A | Component B
+```
+
+LangChain creates a composed workflow.
+
+Conceptually:
+
+```
+Component A
+
+↓
+
+Component B
+```
+
+This composition is represented internally as a `RunnableSequence`.
+
+---
+
+# Example With LLM Components
+
+A simple LLM pipeline:
+
+```
+ChatPromptTemplate
+
+↓
+
+ChatOllama
+
+↓
+
+Response
+```
+
+can be understood as:
+
+```
+RunnableSequence
+
+    |
+
+    ├── Prompt Runnable
+
+    |
+
+    └── Model Runnable
+```
+
+The prompt transforms input data into messages.
+
+The model receives those messages and generates a response.
+
+---
+
+# Data Flow
+
+The execution flow of a simple sequence is:
+
+```
+User Input
+
+↓
+
+Prompt Template
+
+↓
+
+Messages
+
+↓
+
+Chat Model
+
+↓
+
+AIMessage
+
+↓
+
+Response
+```
+
+Each component has a specific responsibility.
+
+The sequence only coordinates the execution order.
+
+---
+
+# Why RunnableSequence Exists
+
+Without composition, the application manually manages every step:
+
+```
+Input
+
+↓
+
+Call Prompt
+
+↓
+
+Receive Messages
+
+↓
+
+Call Model
+
+↓
+
+Receive Response
+```
+
+This approach works for small examples, but it becomes harder to maintain as workflows become larger.
+
+RunnableSequence makes the workflow structure explicit:
+
+```
+Input
+
+↓
+
+RunnableSequence
+
+↓
+
+Output
+```
+
+---
+
+# Composition Principle
+
+RunnableSequence follows the software engineering principle of composition.
+
+Instead of creating one large component:
+
+```
+LLM Application
+
+├── Prompt logic
+├── Model logic
+├── Parsing logic
+└── Validation logic
+```
+
+we combine smaller components:
+
+```
+Prompt
+
+↓
+
+Model
+
+↓
+
+Parser
+
+↓
+
+Validator
+```
+
+Each component maintains a clear responsibility.
+
+---
+
+# RunnableSequence vs Agent
+
+A RunnableSequence is deterministic.
+
+The execution path is predefined.
+
+Example:
+
+```
+Input
+
+↓
+
+Step 1
+
+↓
+
+Step 2
+
+↓
+
+Step 3
+
+↓
+
+Output
+```
+
+The system always follows the same workflow.
+
+---
+
+An Agent is different.
+
+An Agent introduces decision-making.
+
+Conceptually:
+
+```
+User
+
+↓
+
+Agent
+
+↓
+
+Decision
+
+↓
+
+Tool
+
+↓
+
+Observation
+
+↓
+
+Decision
+
+↓
+
+Final Answer
+```
+
+An Agent can decide:
+
+- which action to take,
+- which tool to use,
+- whether another step is required.
+
+Agents will be explored later in:
+
+- Phase 5 — Tool-Using Agent.
+- Phase 6 — Reasoning & Agent Workflow.
+
+---
+
+# Relationship With Our Educational Project
+
+Our LCEL demo:
+
+```
+ChatPromptTemplate
+
+↓
+
+ChatOllama
+
+↓
+
+Response
+```
+
+is a simple RunnableSequence.
+
+The purpose was to learn:
+
+- component composition,
+- runnable workflows,
+- data flow.
+
+It was not intended to replace our Agent architecture.
+
+---
+
+# Why We Keep the Agent Architecture Separate
+
+The current project architecture:
+
+```
+Agent
+
+↓
+
+PromptTemplate
+
+↓
+
+Conversation
+
+↓
+
+ChatModel
+
+↓
+
+Ollama
+```
+
+teaches software engineering concepts:
+
+- separation of responsibilities,
+- abstraction,
+- dependency inversion,
+- testability.
+
+The LCEL example teaches:
+
+```
+LangChain Components
+
+↓
+
+Composition
+
+↓
+
+Workflow
+```
+
+Both concepts are useful but solve different problems.
+
+---
+
+# Engineering Concepts
+
+## Composition
+
+Complex workflows can be created by combining smaller components.
+
+---
+
+## Separation of Concerns
+
+Each component focuses on one responsibility.
+
+Example:
+
+```
+Prompt
+
+Responsible for:
+
+- Instructions
+- Message creation
+```
+
+```
+Model
+
+Responsible for:
+
+- LLM communication
+- Response generation
+```
+
+---
+
+## Workflow Design
+
+A workflow describes how components interact and how data moves through the system.
+
+---
+
+# Scope Limitation
+
+For this educational project, we only need to understand:
+
+- Runnable components.
+- Sequential execution.
+- LCEL composition.
+- Basic Chain concepts.
+
+We will not implement:
+
+- complex workflow engines,
+- advanced orchestration,
+- multiple nested chains.
+
+Those belong to future AI system projects.
+
+---
+
+# Key Takeaways
+
+- RunnableSequence represents ordered execution of runnable components.
+- LCEL uses composition to create sequences.
+- The pipe operator connects components together.
+- Chains are compositions of runnable components.
+- RunnableSequence is deterministic.
+- Agents add decision-making capabilities on top of workflows.
+- Understanding composition is a foundation for building larger AI systems.
+
+---
+
+## Phase 3 Status:
+
+Completed ✅
+
+Topics completed:
+
+- Why LangChain exists
+- LangChain architecture
+- Chat Models
+- Messages
+- Prompt Templates
+- ChatPromptTemplate
+- Prompt variables
+- LCEL fundamentals
+- Prompt → Model pipeline
+- RunnableSequence
+
+## Implementation:
+
+- LangChain prompt integration.
+- LangChain Ollama integration.
+- LCEL educational pipeline example.
+
+## Validation:
+
+- pre-commit run --all-files ✅

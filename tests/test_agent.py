@@ -9,9 +9,9 @@ Purpose:
 
 The tests verify:
 - Agent delegates generation to ChatModel.
+- Agent uses PromptTemplate.
 - Agent manages conversation state.
 - Previous messages are preserved.
-- ChatModel receives the complete conversation history.
 """
 
 from langchain_core.messages import AIMessage, BaseMessage
@@ -19,16 +19,12 @@ from langchain_core.messages import AIMessage, BaseMessage
 from ai_agent_system.agent import Agent
 from ai_agent_system.chat_model import ChatModel
 from ai_agent_system.conversation import Conversation
+from ai_agent_system.prompt import PromptTemplate
 
 
 class FakeChatModel(ChatModel):
     """
     Fake ChatModel implementation.
-
-    This class replaces the real model during testing.
-
-    It provides deterministic responses and allows
-    verification of message history handling.
     """
 
     def invoke(
@@ -36,17 +32,7 @@ class FakeChatModel(ChatModel):
         messages: list[BaseMessage],
     ) -> AIMessage:
         """
-        Generate a fake response.
-
-        Parameters
-        ----------
-        messages:
-            Conversation history received by the model.
-
-        Returns
-        -------
-        AIMessage
-            Fixed response.
+        Return deterministic response.
         """
 
         return AIMessage(
@@ -54,21 +40,37 @@ class FakeChatModel(ChatModel):
         )
 
 
+class FakePrompt(PromptTemplate):
+    """
+    Fake prompt implementation for testing Agent behavior.
+    """
+
+    def format_messages(
+        self,
+        **kwargs: str,
+    ) -> list[BaseMessage]:
+        """
+        Create test messages.
+        """
+
+        from langchain_core.messages import HumanMessage
+
+        return [
+            HumanMessage(
+                content=kwargs["question"],
+            )
+        ]
+
+
 class MemoryAwareFakeChatModel(ChatModel):
     """
-    Fake ChatModel that simulates memory usage.
-
-    It checks whether previous conversation messages
-    are available.
+    Fake ChatModel that checks conversation history.
     """
 
     def invoke(
         self,
         messages: list[BaseMessage],
     ) -> AIMessage:
-        """
-        Generate a response based on message history.
-        """
 
         if len(messages) >= 3:
             return AIMessage(
@@ -80,18 +82,27 @@ class MemoryAwareFakeChatModel(ChatModel):
         )
 
 
+def create_agent(
+    chat_model: ChatModel,
+) -> Agent:
+    """
+    Helper function to create Agent instances.
+    """
+
+    return Agent(
+        chat_model,
+        Conversation(),
+        FakePrompt(),
+    )
+
+
 def test_agent_returns_chat_model_response() -> None:
     """
-    Verify Agent returns the ChatModel response.
+    Verify Agent returns ChatModel response.
     """
 
-    fake_chat_model = FakeChatModel()
-
-    conversation = Conversation()
-
-    agent = Agent(
-        fake_chat_model,
-        conversation,
+    agent = create_agent(
+        FakeChatModel()
     )
 
     response = agent.answer(
@@ -103,16 +114,15 @@ def test_agent_returns_chat_model_response() -> None:
 
 def test_agent_updates_conversation_state() -> None:
     """
-    Verify Agent stores user and assistant messages.
+    Verify Agent stores messages.
     """
-
-    fake_chat_model = FakeChatModel()
 
     conversation = Conversation()
 
     agent = Agent(
-        fake_chat_model,
+        FakeChatModel(),
         conversation,
+        FakePrompt(),
     )
 
     agent.answer(
@@ -128,16 +138,15 @@ def test_agent_updates_conversation_state() -> None:
 
 def test_agent_uses_previous_conversation_context() -> None:
     """
-    Verify that previous messages are available to ChatModel.
+    Verify previous messages are available.
     """
-
-    memory_model = MemoryAwareFakeChatModel()
 
     conversation = Conversation()
 
     agent = Agent(
-        memory_model,
+        MemoryAwareFakeChatModel(),
         conversation,
+        FakePrompt(),
     )
 
     first_response = agent.answer(

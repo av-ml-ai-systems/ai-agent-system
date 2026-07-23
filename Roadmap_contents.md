@@ -506,3 +506,41 @@ Turn the repository into a professional portfolio project.
 ⬜ GitHub publication
 
 ⬜ Final review
+
+So the complete hierarchy becomes:
+
+🥇 Golden Rule #0
+
+Never generate external files unless explicitly requested.
+
+🥇 Golden Rule #1
+
+Finish the first educational AI Agent. Do not build the ultimate AI Agent.
+
+🥇 Golden Rule #2
+
+The roadmap is frozen. If it is not in the roadmap, it belongs to another repository.
+
+🥇 Golden Rule #3
+
+One repository = one educational objective.
+
+🥇 Golden Rule #4
+
+Prefer the simplest solution that satisfies the educational objective.
+
+🥇 Golden Rule #5
+
+Educational before enterprise.
+
+🥇 Golden Rule #6
+
+Every phase ends: Understand → Design → Implement → Test → Validate → Document → Git Commit → Move on.
+
+🥇 Golden Rule #7
+
+No scope creep. "While we're here..." is almost always "No."
+
+🥇 Golden Rule #8
+
+Every decision must improve the project as a portfolio piece or help complete the educational objective. Otherwise, don't do it.

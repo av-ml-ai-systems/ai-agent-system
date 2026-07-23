@@ -6,19 +6,22 @@ Location:
 
 Purpose:
     Defines the Agent class, which coordinates user interaction
-    with a chat-based language model and conversation state.
+    with a chat-based language model, prompt generation, and
+    conversation state.
 
 The Agent depends only on abstractions:
 - ChatModel
 - Conversation
+- PromptTemplate
 
 It does not depend on LangChain providers or Ollama directly.
 """
 
-from langchain_core.messages import AIMessage, HumanMessage
+from langchain_core.messages import AIMessage
 
 from ai_agent_system.chat_model import ChatModel
 from ai_agent_system.conversation import Conversation
+from ai_agent_system.prompt import PromptTemplate
 
 
 class Agent:
@@ -27,16 +30,17 @@ class Agent:
 
     Responsibilities:
     - Receive user input.
+    - Generate messages using a prompt abstraction.
     - Manage conversation state.
     - Delegate generation to ChatModel.
     - Store generated responses.
     """
 
-
     def __init__(
         self,
         chat_model: ChatModel,
         conversation: Conversation,
+        prompt: PromptTemplate,
     ) -> None:
         """
         Initialize the Agent.
@@ -48,11 +52,14 @@ class Agent:
 
         conversation:
             Conversation state manager.
+
+        prompt:
+            Prompt generation abstraction.
         """
 
         self.chat_model = chat_model
         self.conversation = conversation
-
+        self.prompt = prompt
 
     def answer(
         self,
@@ -72,13 +79,14 @@ class Agent:
             Generated response.
         """
 
-        human_message = HumanMessage(
-            content=question,
+        messages = self.prompt.format_messages(
+            question=question,
         )
 
-        self.conversation.add_message(
-            human_message,
-        )
+        for message in messages:
+            self.conversation.add_message(
+                message,
+            )
 
         response: AIMessage = self.chat_model.invoke(
             self.conversation.messages()

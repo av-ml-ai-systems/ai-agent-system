@@ -216,188 +216,293 @@ Pre-commit
 
 ---
 
-# ⬜ Phase 3 — Prompt Engineering
+🟡 Phase 3 — LangChain Foundations
+Objective
 
-## ⬜ Phase 3.1 — Prompt Engineering Fundamentals
+Understand how LangChain helps organize LLM applications.
 
-⬜ Learn prompt engineering fundamentals.
+The objective is not to learn every LangChain feature.
 
-⬜ Understand system prompts.
+3.1 — Why LangChain?
 
-⬜ Understand user prompts.
+⬜ Why LangChain exists
 
-⬜ Understand assistant messages.
+⬜ Problems it solves
 
-⬜ Learn prompt structure and formatting.
+⬜ LangChain architecture
 
----
+⬜ Chat Models
 
-## ⬜ Phase 3.2 — Prompt Templates and Management
+⬜ Messages
 
-⬜ Create reusable prompt templates.
+3.2 — Prompt Templates
 
-⬜ Separate prompts from business logic.
+⬜ PromptTemplate
 
-⬜ Introduce prompt variables.
+⬜ ChatPromptTemplate
 
-⬜ Create configurable prompts.
+⬜ Message placeholders
 
-⬜ Learn prompt versioning concepts.
+⬜ Prompt composition
 
----
+3.3 — Chains
 
-## ⬜ Phase 3.3 — Advanced Prompt Techniques
+⬜ LCEL fundamentals
 
-⬜ Few-shot prompting.
+⬜ Prompt → Model pipeline
 
-⬜ Role-based prompting.
+⬜ RunnableSequence
 
-⬜ Instruction hierarchy.
+⬜ Small educational examples
 
-⬜ Prompt optimization.
+Engineering Concepts
 
-⬜ Prompt evaluation strategies.
+⬜ Separation of concerns
 
----
+⬜ Dependency management
 
-# ⬜ Phase 4 — Tool Calling
+⬜ Composition
 
-## ⬜ Phase 4.1 — Tool Fundamentals
+🟡 Phase 4 — Prompt Engineering & Structured Outputs
+Objective
 
-⬜ Understand function/tool calling.
+Make the Agent more reliable and predictable.
 
-⬜ Create the first tool.
+4.1 — Prompt Engineering
 
-⬜ Define tool interfaces.
+⬜ System prompts
 
-⬜ Learn how Agents select tools.
+⬜ User prompts
 
----
+⬜ Few-shot prompting
 
-## ⬜ Phase 4.2 — Multiple Tools
+⬜ Prompt refinement
 
-⬜ Add two or three simple tools.
+⬜ Prompt organization
 
-⬜ Implement tool selection.
+4.2 — Structured Outputs
 
-⬜ Separate reasoning from execution.
+⬜ JSON responses
 
-⬜ Validate tool workflows.
+⬜ Output parsing
 
----
+⬜ Pydantic models
 
-# ⬜ Phase 5 — Memory Expansion
+⬜ Validation
 
-## ⬜ Phase 5.1 — Advanced Memory
+Engineering Concepts
 
-⬜ Understand short-term memory.
+⬜ Data contracts
 
-⬜ Understand long-term memory.
+⬜ Type safety
 
-⬜ Introduce persistent memory concepts.
+⬜ Validation
 
-⬜ Explore vector-based memory.
+🟡 Phase 5 — Tool-Using Agent
+Objective
 
----
+Transform the chatbot into an educational AI Agent.
 
-# ⬜ Phase 6 — Multi-step Reasoning
+Only three simple tools.
 
-## ⬜ Phase 6.1 — Agent Workflows
+5.1 — Tool Fundamentals
 
-⬜ Introduce planning.
+⬜ What is a Tool?
 
-⬜ Introduce reasoning loops.
+⬜ Tool Calling
 
-⬜ Introduce execution loops.
+⬜ Agent decisions
 
-⬜ Introduce feedback loops.
+⬜ External capabilities
 
----
+5.2 — Calculator Tool
 
-## ⬜ Phase 6.2 — Advanced Agent Architecture
+⬜ Implement calculator
 
-⬜ Design multi-step tasks.
+⬜ Unit tests
 
-⬜ Introduce workflow orchestration.
+⬜ Integration test
 
-⬜ Prepare for LangGraph concepts.
+5.3 — Clock Tool
 
----
+⬜ Current date/time
 
-# ⬜ Phase 7 — Retrieval-Augmented Generation (RAG)
+⬜ Unit tests
 
-## ⬜ Phase 7.1 — RAG Foundations
+⬜ Integration test
 
-⬜ Understand embeddings.
+5.4 — File Reader Tool
 
-⬜ Understand vector databases.
+⬜ Read local text files
 
-⬜ Implement document ingestion.
+⬜ Unit tests
 
-⬜ Implement retrieval pipelines.
+⬜ Integration test
 
----
+5.5 — Tool Integration
 
-## ⬜ Phase 7.2 — RAG Integration
+⬜ Agent chooses tools
 
-⬜ Connect RAG with Agent architecture.
+⬜ Validate complete workflow
 
-⬜ Combine memory and retrieval.
+Engineering Concepts
 
-⬜ Evaluate retrieval quality.
+⬜ Composition
 
----
+⬜ Single Responsibility
 
-# ⬜ Phase 8 — User Interfaces
+⬜ Open/Closed Principle
 
-## ⬜ Phase 8.1 — Streamlit Interface
+🟡 Phase 6 — Reasoning & Agent Workflow
+Objective
 
-⬜ Create a chat interface.
+Understand how an Agent reasons.
 
-⬜ Connect UI with Agent backend.
+Educational implementation only.
 
----
+6.1 — ReAct Pattern
 
-## ⬜ Phase 8.2 — API Layer
+⬜ Thought
 
-⬜ Create FastAPI backend.
+⬜ Action
 
-⬜ Expose Agent through APIs.
+⬜ Observation
 
-⬜ Understand deployment patterns.
+⬜ Final Answer
 
----
+6.2 — Reasoning Loop
 
-## ⬜ Phase 8.3 — Frontend Expansion
+⬜ Multi-step reasoning
 
-⬜ Introduce React frontend concepts.
+⬜ Tool selection
 
-⬜ Connect frontend with backend APIs.
+⬜ Observation
 
----
+⬜ Final response
 
-# ⬜ Phase 9 — Final Refactoring
+6.3 — Validation
 
-⬜ Improve architecture.
+⬜ Unit tests
 
-⬜ Refactor where necessary.
+⬜ Integration tests
 
-⬜ Apply software engineering principles.
+⬜ Documentation
 
-⬜ Improve maintainability.
+Engineering Concepts
 
-⬜ Improve documentation.
+⬜ Workflow orchestration
 
----
+⬜ Responsibility boundaries
 
-# ⬜ Phase 10 — Portfolio Preparation
+🟡 Phase 7 — Memory & Conversation State
+Objective
 
-⬜ Clean repository.
+Understand short-term conversational memory.
 
-⬜ Improve README.
+Only conversation memory.
 
-⬜ Add architecture diagrams.
+No long-term memory.
 
-⬜ Document engineering decisions.
+7.1 — Memory Concepts
 
-⬜ Prepare project for GitHub portfolio.
+⬜ Short-term memory
+
+⬜ Conversation history
+
+⬜ State ownership
+
+7.2 — Memory Integration
+
+⬜ Connect memory with reasoning
+
+⬜ Maintain clean responsibilities
+
+⬜ Validate behavior
+
+Engineering Concepts
+
+⬜ Encapsulation
+
+⬜ State management
+
+🟡 Phase 8 — User Interfaces
+Objective
+
+Expose the Agent through simple user interfaces.
+
+8.1 — FastAPI Backend
+
+⬜ Create API
+
+⬜ Chat endpoint
+
+⬜ Agent integration
+
+⬜ OpenAPI documentation
+
+8.2 — Streamlit Interface
+
+⬜ Experimentation interface
+
+⬜ Chat window
+
+⬜ Conversation visualization
+
+8.3 — React Frontend
+
+⬜ Chat interface
+
+⬜ Connect to FastAPI
+
+⬜ Display conversation history
+
+⬜ Simple UI
+
+Engineering Concepts
+
+⬜ API layer
+
+⬜ Frontend / Backend separation
+
+🟡 Phase 9 — Portfolio Preparation
+Objective
+
+Turn the repository into a professional portfolio project.
+
+9.1 — Code Review
+
+⬜ Final cleanup
+
+⬜ Refactoring
+
+⬜ Remove unused code
+
+9.2 — Documentation
+
+⬜ Improve README
+
+⬜ Installation guide
+
+⬜ Architecture diagrams
+
+⬜ Usage guide
+
+9.3 — Testing Review
+
+⬜ Ruff
+
+⬜ MyPy
+
+⬜ Pytest
+
+⬜ Final validation
+
+9.4 — Portfolio
+
+⬜ Demo
+
+⬜ Screenshots
+
+⬜ GitHub publication
+
+⬜ Final review

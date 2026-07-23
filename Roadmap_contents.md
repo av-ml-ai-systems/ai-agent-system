@@ -78,115 +78,326 @@ Pre-commit
 🟢 Understand mocking and test doubles.
 🟢 Build confidence before integrating a real LLM.
 
-🟡 Phase 2 — First Real LLM Integration
-2.1 — LLM Integration Foundations
 
-⬜ Review the current LLM abstraction.
-⬜ Understand LLM interfaces, implementations, and providers.
-⬜ Identify where the real LLM enters the architecture.
-⬜ Apply dependency inversion principles.
-⬜ Preserve separation between Agent logic and infrastructure.
 
-2.2 — Introduce Ollama
+# 🟢 Phase 2 — First Real LLM Integration
 
-⬜ Understand Ollama architecture.
-⬜ Install and configure Ollama.
-⬜ Download and manage a local LLM model.
-⬜ Execute the first local inference.
-⬜ Understand local model resource requirements.
+## 🟢 Phase 2.1 — LLM Integration Foundations
 
-2.3 — Create the First Real LLM Adapter
+🟢 Review the current LLM abstraction.
 
-⬜ Create an Ollama-based LLM implementation.
-⬜ Connect Ollama to the existing LLM abstraction.
-⬜ Apply the Adapter Pattern.
-⬜ Use dependency injection with the new implementation.
-⬜ Keep the Agent independent from Ollama.
+🟢 Understand LLM interfaces, implementations, and providers.
 
-2.4 — Introduce LangChain
+🟢 Identify where the real LLM enters the architecture.
 
-⬜ Understand why LangChain exists.
-⬜ Introduce LangChain models.
-⬜ Introduce LangChain message handling.
-⬜ Connect LangChain with Ollama.
-⬜ Understand LangChain responsibilities and limitations.
+🟢 Apply dependency inversion principles.
 
-2.5 — Refactor the LLM Layer
+🟢 Preserve separation between Agent logic and infrastructure.
 
-⬜ Integrate LangChain without changing the Agent interface.
-⬜ Separate application logic from LLM infrastructure.
-⬜ Maintain interchangeable LLM implementations.
-⬜ Update the architecture documentation.
+---
 
-2.6 — First Real Conversation
+## 🟢 Phase 2.2 — Introduce Ollama
 
-⬜ Connect the Agent to a real local LLM.
-⬜ Execute the first real conversation.
-⬜ Observe the complete request-response flow.
-⬜ Document the new architecture milestone.
+🟢 Understand Ollama architecture.
 
-2.7 — Phase 2 Validation
+🟢 Install and configure Ollama.
 
-⬜ Validate with Ruff.
-⬜ Validate with MyPy.
-⬜ Validate with Pytest.
-⬜ Keep FakeLLM tests working.
-⬜ Add integration testing strategy.
+🟢 Download and manage a local LLM model.
 
-2.8 — Phase 2 Architectural Checkpoint
+🟢 Execute the first local inference.
 
-⬜ Document the real LLM integration.
-⬜ Document Ollama integration.
-⬜ Document LangChain integration.
-⬜ Review architectural decisions.
-⬜ Prepare for prompt engineering phase.
+🟢 Understand local model resource requirements.
 
-⬜ Phase 2 — First Real LLM Integration
+---
 
-⬜ Introduce Ollama.
-⬜ Introduce LangChain.
-⬜ Connect the Agent to a real LLM.
-⬜ Execute the first real conversation.
+## 🟢 Phase 2.3 — Create the First Real LLM Adapter
 
-⬜ Phase 3 — Prompts
+🟢 Create an Ollama-based LLM implementation.
+
+🟢 Connect Ollama to the existing LLM abstraction.
+
+🟢 Apply the Adapter Pattern.
+
+🟢 Use dependency injection with the new implementation.
+
+🟢 Keep the Agent independent from Ollama.
+
+---
+
+## 🟢 Phase 2.4 — Introduce LangChain
+
+🟢 Understand why LangChain exists.
+
+🟢 Introduce LangChain models.
+
+🟢 Introduce LangChain message handling.
+
+🟢 Connect LangChain with Ollama.
+
+🟢 Understand LangChain responsibilities and limitations.
+
+---
+
+## 🟢 Phase 2.5 — Refactor the LLM Layer
+
+🟢 Integrate LangChain without changing the Agent responsibility.
+
+🟢 Separate application logic from LLM infrastructure.
+
+🟢 Maintain interchangeable LLM implementations.
+
+🟢 Update the architecture documentation.
+
+---
+
+## 🟢 Phase 2.6 — First Real Conversation
+
+🟢 Connect the Agent to a real local LLM.
+
+🟢 Execute the first real conversation.
+
+🟢 Observe the complete request-response flow.
+
+🟢 Document the new architecture milestone.
+
+---
+
+## 🟢 Phase 2.7 — Migrate from LLM Interface to Chat Model Interface
+
+🟢 Replace string-based LLM interaction with structured messages.
+
+🟢 Introduce the ChatModel abstraction.
+
+🟢 Create the OllamaChat adapter.
+
+🟢 Migrate Agent from LLM dependency to ChatModel dependency.
+
+🟢 Update unit tests using FakeChatModel.
+
+🟢 Add ChatModel integration testing.
+
+---
+
+## 🟢 Phase 2.8 — Introduce Prompt Templates
+
+🟢 Create PromptTemplate abstraction.
+
+🟢 Separate prompt construction from Agent logic.
+
+🟢 Introduce LangChain prompt integration.
+
+🟢 Refactor Agent workflow to use prompt abstractions.
+
+🟢 Update tests.
+
+🟢 Update demo application.
+
+---
+
+## 🟢 Phase 2.9 — Introduce Conversation State
+
+🟢 Understand why memory is a separate responsibility.
+
+🟢 Create Conversation State abstraction.
+
+🟢 Create message history management.
+
+🟢 Integrate Conversation State with Agent.
+
+🟢 Validate stateful conversations.
+
+🟢 Update tests.
+
+🟢 Validate with Ruff.
+
+🟢 Validate with MyPy.
+
+🟢 Validate with Pytest.
+
+---
+
+# ⬜ Phase 3 — Prompt Engineering
+
+## ⬜ Phase 3.1 — Prompt Engineering Fundamentals
 
 ⬜ Learn prompt engineering fundamentals.
-⬜ Create prompt templates.
+
+⬜ Understand system prompts.
+
+⬜ Understand user prompts.
+
+⬜ Understand assistant messages.
+
+⬜ Learn prompt structure and formatting.
+
+---
+
+## ⬜ Phase 3.2 — Prompt Templates and Management
+
+⬜ Create reusable prompt templates.
+
 ⬜ Separate prompts from business logic.
 
-⬜ Phase 4 — Memory
+⬜ Introduce prompt variables.
 
-⬜ Introduce conversational memory.
-⬜ Understand why memory is a separate responsibility.
+⬜ Create configurable prompts.
 
-⬜ Phase 5 — Tool Calling
+⬜ Learn prompt versioning concepts.
+
+---
+
+## ⬜ Phase 3.3 — Advanced Prompt Techniques
+
+⬜ Few-shot prompting.
+
+⬜ Role-based prompting.
+
+⬜ Instruction hierarchy.
+
+⬜ Prompt optimization.
+
+⬜ Prompt evaluation strategies.
+
+---
+
+# ⬜ Phase 4 — Tool Calling
+
+## ⬜ Phase 4.1 — Tool Fundamentals
+
+⬜ Understand function/tool calling.
 
 ⬜ Create the first tool.
+
+⬜ Define tool interfaces.
+
+⬜ Learn how Agents select tools.
+
+---
+
+## ⬜ Phase 4.2 — Multiple Tools
+
 ⬜ Add two or three simple tools.
-⬜ Learn how the Agent decides when to use them.
 
-⬜ Phase 6 — Multi-step Reasoning
+⬜ Implement tool selection.
 
-⬜ Planning.
-⬜ Reasoning loop.
-⬜ Execution loop.
-⬜ Feedback loop.
+⬜ Separate reasoning from execution.
 
-⬜ Phase 7 — User Interfaces
+⬜ Validate tool workflows.
 
-⬜ Streamlit interface.
-⬜ FastAPI integration.
-⬜ React frontend (later in the phase).
+---
 
-⬜ Phase 8 — Final Refactoring
+# ⬜ Phase 5 — Memory Expansion
 
-⬜ Improve the architecture.
+## ⬜ Phase 5.1 — Advanced Memory
+
+⬜ Understand short-term memory.
+
+⬜ Understand long-term memory.
+
+⬜ Introduce persistent memory concepts.
+
+⬜ Explore vector-based memory.
+
+---
+
+# ⬜ Phase 6 — Multi-step Reasoning
+
+## ⬜ Phase 6.1 — Agent Workflows
+
+⬜ Introduce planning.
+
+⬜ Introduce reasoning loops.
+
+⬜ Introduce execution loops.
+
+⬜ Introduce feedback loops.
+
+---
+
+## ⬜ Phase 6.2 — Advanced Agent Architecture
+
+⬜ Design multi-step tasks.
+
+⬜ Introduce workflow orchestration.
+
+⬜ Prepare for LangGraph concepts.
+
+---
+
+# ⬜ Phase 7 — Retrieval-Augmented Generation (RAG)
+
+## ⬜ Phase 7.1 — RAG Foundations
+
+⬜ Understand embeddings.
+
+⬜ Understand vector databases.
+
+⬜ Implement document ingestion.
+
+⬜ Implement retrieval pipelines.
+
+---
+
+## ⬜ Phase 7.2 — RAG Integration
+
+⬜ Connect RAG with Agent architecture.
+
+⬜ Combine memory and retrieval.
+
+⬜ Evaluate retrieval quality.
+
+---
+
+# ⬜ Phase 8 — User Interfaces
+
+## ⬜ Phase 8.1 — Streamlit Interface
+
+⬜ Create a chat interface.
+
+⬜ Connect UI with Agent backend.
+
+---
+
+## ⬜ Phase 8.2 — API Layer
+
+⬜ Create FastAPI backend.
+
+⬜ Expose Agent through APIs.
+
+⬜ Understand deployment patterns.
+
+---
+
+## ⬜ Phase 8.3 — Frontend Expansion
+
+⬜ Introduce React frontend concepts.
+
+⬜ Connect frontend with backend APIs.
+
+---
+
+# ⬜ Phase 9 — Final Refactoring
+
+⬜ Improve architecture.
+
 ⬜ Refactor where necessary.
-⬜ Apply everything learned throughout the project.
 
-⬜ Phase 9 — Portfolio Preparation
+⬜ Apply software engineering principles.
 
-⬜ Clean the repository.
-⬜ Improve the README.
-⬜ Review the architecture.
-⬜ Prepare the project for GitHub.
+⬜ Improve maintainability.
+
+⬜ Improve documentation.
+
+---
+
+# ⬜ Phase 10 — Portfolio Preparation
+
+⬜ Clean repository.
+
+⬜ Improve README.
+
+⬜ Add architecture diagrams.
+
+⬜ Document engineering decisions.
+
+⬜ Prepare project for GitHub portfolio.

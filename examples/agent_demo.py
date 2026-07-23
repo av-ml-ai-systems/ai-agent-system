@@ -5,33 +5,52 @@ Location:
     examples/
 
 Purpose:
-    Demonstrates the complete application architecture by connecting the Agent
-    to a real Ollama model through the LLM abstraction. This example verifies
-    that the Agent remains independent of both LangChain and Ollama.
+    Demonstrates the complete Agent architecture using:
+    - Conversation State
+    - ChatModel abstraction
+    - OllamaChat adapter
+
+The Agent remains independent from:
+- Ollama
+- LangChain
+- Provider-specific implementations
 """
 
-from langchain_ollama import OllamaLLM as LangChainOllamaLLM
-
 from ai_agent_system.agent import Agent
-from ai_agent_system.ollama_llm import OllamaLLM
+from ai_agent_system.conversation import Conversation
+from ai_agent_system.ollama_chat import OllamaChat
 
 
 def main() -> None:
-    """Run a simple conversation with the Agent."""
+    """
+    Run a stateful conversation with the Agent.
+    """
 
-    langchain_llm = LangChainOllamaLLM(
+    chat_model = OllamaChat(
         model="qwen3:4b",
         base_url="http://localhost:11434",
     )
 
-    llm = OllamaLLM(langchain_llm)
+    conversation = Conversation()
 
-    agent = Agent(llm)
+    agent = Agent(
+        chat_model,
+        conversation,
+    )
 
-    response = agent.answer("Introduce yourself in one sentence.")
+    first_response = agent.answer(
+        "My name is Alvaro."
+    )
 
-    print("\nAgent Response:\n")
-    print(response)
+    print("\nAssistant:\n")
+    print(first_response)
+
+    second_response = agent.answer(
+        "What is my name?"
+    )
+
+    print("\nAssistant:\n")
+    print(second_response)
 
 
 if __name__ == "__main__":

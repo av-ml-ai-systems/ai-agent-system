@@ -1001,7 +1001,7 @@ The project successfully integrated its first real Large Language Model through 
 The Agent remains independent from infrastructure concerns while `OllamaLLM` provides the connection between the application and the local Ollama runtime.
 
 This architectural foundation prepares the project for the next step: introducing LangChain while preserving the existing architecture and design principles.
-```
+
 
 # Phase 2.4 — Introduce LangChain
 
@@ -2057,3 +2057,1251 @@ LangChain Ollama
  ↓
 Qwen3 Model
 ```
+
+# Phase 2.6 — Introduce LangChain Message Model
+
+## Objective
+
+Explore LangChain's message-based communication model and understand why modern AI Agent systems use structured messages instead of simple text prompts.
+
+The goal of this phase was not to modify the Agent architecture yet, but to experimentally evaluate the difference between:
+
+- Simple string-based LLM interaction.
+- Structured message-based interaction.
+
+---
+
+## Previous Approach
+
+Before this phase, the project communicated with the language model using a simple string prompt.
+
+The architecture was:
+
+```
+Agent
+ ↓
+LLM Interface
+ ↓
+OllamaLLM Adapter
+ ↓
+Ollama Model
+ ↓
+Text Response
+```
+
+The communication contract was:
+
+```
+Input:
+
+str
+
+
+Output:
+
+str
+```
+
+This approach is enough for simple interactions, but it does not naturally represent:
+
+- System instructions.
+- Conversation history.
+- Different message roles.
+- Tool interactions.
+
+---
+
+# LangChain Message Model
+
+LangChain introduces a structured message abstraction for conversational AI systems.
+
+Instead of sending only raw text, applications can represent interactions using different message types.
+
+Main message types:
+
+```
+SystemMessage
+      |
+      ↓
+HumanMessage
+      |
+      ↓
+AIMessage
+```
+
+Each message has a specific role:
+
+## SystemMessage
+
+Defines the behavior and instructions for the model.
+
+Example:
+
+```
+You are a concise AI assistant.
+```
+
+---
+
+## HumanMessage
+
+Represents the user's request.
+
+Example:
+
+```
+Explain machine learning.
+```
+
+---
+
+## AIMessage
+
+Represents the model's generated response.
+
+Example:
+
+```
+Machine learning is a field of AI...
+```
+
+---
+
+# Experiment Implementation
+
+A new educational example was created:
+
+```
+examples/langchain_messages_demo.py
+```
+
+The purpose of this file was to compare two interaction styles:
+
+1. Simple string invocation.
+2. Structured message invocation.
+
+---
+
+# Experiment 1 — String Prompt
+
+The first experiment used:
+
+```
+"Introduce yourself in one sentence."
+```
+
+The flow was:
+
+```
+String Prompt
+      |
+      ↓
+ChatOllama
+      |
+      ↓
+Qwen3 Model
+      |
+      ↓
+AIMessage
+```
+
+LangChain automatically converts the string into an internal message representation.
+
+---
+
+# Experiment 2 — Structured Messages
+
+The second experiment explicitly created messages:
+
+```
+SystemMessage
+        |
+        ↓
+HumanMessage
+        |
+        ↓
+ChatOllama
+        |
+        ↓
+Qwen3 Model
+        |
+        ↓
+AIMessage
+```
+
+The model received:
+
+```
+System:
+You are a concise AI assistant.
+
+Human:
+Introduce yourself in one sentence.
+```
+
+The response was generated successfully.
+
+---
+
+# Important Discovery
+
+During the experiment, an important distinction was identified between LangChain model abstractions.
+
+## OllamaLLM
+
+The `OllamaLLM` class represents a traditional text completion model.
+
+Behavior:
+
+```
+Input:
+
+str
+
+
+Output:
+
+str
+```
+
+Example:
+
+```
+prompt
+ ↓
+OllamaLLM
+ ↓
+text response
+```
+
+---
+
+## ChatOllama
+
+The `ChatOllama` class represents a conversational model.
+
+Behavior:
+
+```
+Input:
+
+list[Message]
+
+
+Output:
+
+AIMessage
+```
+
+Example:
+
+```
+Messages
+ ↓
+ChatOllama
+ ↓
+AIMessage
+```
+
+The response can be accessed through:
+
+```
+response.content
+```
+
+---
+
+# Architectural Implications
+
+The experiment demonstrated that Agent systems usually require message-based communication.
+
+Simple text prompts are limited because they cannot naturally represent:
+
+- Previous conversation turns.
+- Agent instructions.
+- User roles.
+- Assistant responses.
+- Tool execution messages.
+
+A more realistic Agent architecture requires structured communication.
+
+---
+
+# Evolution of the Architecture
+
+Current architecture:
+
+```
+Agent
+ |
+ ↓
+LLM Interface
+ |
+ ↓
+OllamaLLM Adapter
+ |
+ ↓
+Text Completion Model
+ |
+ ↓
+String Response
+```
+
+Future architecture:
+
+```
+Agent
+ |
+ ↓
+Chat Model Interface
+ |
+ ↓
+ChatOllama Adapter
+ |
+ ↓
+Chat Model
+ |
+ ↓
+AIMessage Response
+```
+
+---
+
+# Key Lessons Learned
+
+## 1. LLMs and Chat Models are different abstractions
+
+A traditional LLM interface focuses on text completion.
+
+A chat model interface focuses on conversations using structured messages.
+
+---
+
+## 2. Messages provide context and roles
+
+Structured messages allow the system to distinguish between:
+
+- Instructions.
+- User requests.
+- Previous assistant responses.
+
+---
+
+## 3. Agent systems require richer communication
+
+Future capabilities such as:
+
+- Memory.
+- Planning.
+- Tool usage.
+- Multi-step reasoning.
+
+depend on message-based architectures.
+
+---
+
+## 4. Framework abstractions must be understood before adoption
+
+Before changing the architecture, the project validated LangChain's behavior experimentally.
+
+This avoids blindly adopting framework features without understanding their impact.
+
+---
+
+# Validation
+
+The experiment was executed successfully:
+
+```
+python examples/langchain_messages_demo.py
+```
+
+Output:
+
+```
+=== Experiment 1: Simple String Prompt ===
+
+Qwen response generated successfully.
+
+
+=== Experiment 2: Structured Messages ===
+
+Qwen response generated successfully.
+```
+
+The experiment confirmed that LangChain supports both:
+
+```
+Simple text invocation
+```
+
+and:
+
+```
+Structured message invocation
+```
+
+# Phase 2.7 — Migrate from LLM Interface to Chat Model Interface
+
+## Objective
+
+Replace the initial LLM abstraction based on simple string prompts with a Chat Model abstraction based on structured conversational messages.
+
+The objective was to move the architecture closer to modern AI Agent systems, where models operate using:
+
+- System messages.
+- Human messages.
+- AI responses.
+- Conversation history.
+- Future tool interactions.
+
+---
+
+# Previous Architecture
+
+The initial implementation used a simple LLM interface:
+
+```
+Agent
+
+ ↓
+
+LLM Interface
+
+ ↓
+
+OllamaLLM Adapter
+
+ ↓
+
+LangChain Ollama LLM
+
+ ↓
+
+Qwen3 Model
+```
+
+The Agent sent a string prompt and received a string response.
+
+Although this approach was useful for understanding basic model invocation, it had limitations:
+
+- No native conversation structure.
+- No distinction between user and assistant roles.
+- No system instructions.
+- Difficult extension toward memory and tools.
+- Limited support for modern agent workflows.
+
+---
+
+# New Architecture
+
+The system was migrated to a Chat Model architecture:
+
+```
+Agent
+
+ ↓
+
+ChatModel Interface
+
+ ↓
+
+OllamaChat Adapter
+
+ ↓
+
+LangChain ChatOllama
+
+ ↓
+
+Qwen3 Model
+```
+
+The Agent now works with structured messages instead of plain text prompts.
+
+---
+
+# New Components
+
+## ChatModel Interface
+
+Created:
+
+```
+src/ai_agent_system/chat_model.py
+```
+
+Purpose:
+
+Define the abstraction that any conversational model must satisfy.
+
+Responsibilities:
+
+- Receive a list of messages.
+- Send messages to a conversational model.
+- Return an AI response message.
+
+The Agent depends only on this abstraction.
+
+The Agent does not know:
+
+- LangChain.
+- Ollama.
+- Specific model providers.
+
+---
+
+## OllamaChat Adapter
+
+Created:
+
+```
+src/ai_agent_system/ollama_chat.py
+```
+
+Purpose:
+
+Provide a concrete implementation of the ChatModel interface using LangChain ChatOllama.
+
+Responsibilities:
+
+- Initialize the Ollama chat model.
+- Communicate with the Ollama server.
+- Return generated AI messages.
+
+Architecture:
+
+```
+Application Layer
+
+ ↓
+
+OllamaChat Adapter
+
+ ↓
+
+LangChain ChatOllama
+
+ ↓
+
+Ollama Server
+
+ ↓
+
+Qwen3 Model
+```
+
+---
+
+# Agent Migration
+
+Updated:
+
+```
+src/ai_agent_system/agent.py
+```
+
+Before:
+
+```
+Agent
+
+ ↓
+
+Creates HumanMessage
+
+ ↓
+
+Calls Model
+```
+
+After:
+
+```
+Agent
+
+ ↓
+
+ChatModel
+
+ ↓
+
+Receives AIMessage
+```
+
+The Agent became independent of:
+
+- LangChain message classes.
+- Ollama implementation details.
+- Specific model providers.
+
+---
+
+# Testing Changes
+
+Updated:
+
+```
+tests/test_agent.py
+```
+
+The previous fake LLM implementation was replaced with:
+
+```
+FakeChatModel
+```
+
+The unit test validates:
+
+```
+Agent
+
+ ↓
+
+ChatModel
+
+ ↓
+
+Response
+```
+
+The test remains independent from:
+
+- Ollama.
+- External APIs.
+- Network calls.
+
+---
+
+Created:
+
+```
+tests/integration/test_ollama_chat.py
+```
+
+Purpose:
+
+Validate the real integration:
+
+```
+OllamaChat
+
+ ↓
+
+ChatOllama
+
+ ↓
+
+Ollama Server
+
+ ↓
+
+Qwen3 Model
+```
+
+---
+
+# Demo Migration
+
+Updated:
+
+```
+examples/agent_demo.py
+```
+
+The demo migrated from:
+
+```
+OllamaLLM
+```
+
+to:
+
+```
+OllamaChat
+```
+
+The example now represents the intended production architecture.
+
+---
+
+# Cleanup
+
+Removed obsolete components:
+
+```
+src/ai_agent_system/llm.py
+
+src/ai_agent_system/ollama_llm.py
+
+tests/integration/test_ollama_llm.py
+```
+
+---
+
+# Validation
+
+The migration was validated using:
+
+```
+pre-commit run --all-files
+
+ruff      Passed
+mypy      Passed
+pytest    Passed
+```
+
+---
+
+# Key Learning
+
+Modern AI Agents should not depend directly on a specific model provider.
+
+The correct architecture is:
+
+```
+Agent
+
+ ↓
+
+Abstract Chat Model
+
+ ↓
+
+Provider Adapter
+
+ ↓
+
+Specific Model Provider
+```
+
+This design allows replacing providers without modifying the Agent.
+
+Examples:
+
+```
+Ollama
+
+OpenAI
+
+Anthropic
+
+Gemini
+
+Azure OpenAI
+
+AWS Bedrock
+```
+
+---
+
+# Phase 2.8 — Introduce Prompt Templates
+
+## Objective
+
+Separate prompt creation from Agent logic.
+
+The goal was to prevent the Agent from being responsible for:
+
+- Creating messages.
+- Defining prompt structure.
+- Managing prompt formatting.
+
+Prompt design becomes an independent component.
+
+---
+
+# Previous Architecture
+
+Before this phase:
+
+```
+User Request
+
+ ↓
+
+Agent
+
+ ↓
+
+HumanMessage Creation
+
+ ↓
+
+ChatModel
+
+ ↓
+
+Response
+```
+
+The Agent had too many responsibilities:
+
+- Receive user input.
+- Build messages.
+- Define prompt structure.
+- Call the model.
+- Return the response.
+
+---
+
+# New Architecture
+
+After introducing Prompt Templates:
+
+```
+User Request
+
+ ↓
+
+Agent
+
+ ↓
+
+PromptTemplate
+
+ ↓
+
+Messages
+
+ ↓
+
+ChatModel
+
+ ↓
+
+OllamaChat
+
+ ↓
+
+Qwen3 Model
+```
+
+The Agent became an orchestrator instead of a prompt builder.
+
+---
+
+# New Components
+
+## PromptTemplate Interface
+
+Created:
+
+```
+src/ai_agent_system/prompt.py
+```
+
+Purpose:
+
+Define the contract for prompt generation.
+
+Responsibilities:
+
+- Receive application variables.
+- Generate model-ready messages.
+- Keep prompt logic independent from the Agent.
+
+---
+
+## LangChainPrompt Adapter
+
+Created:
+
+```
+src/ai_agent_system/langchain_prompt.py
+```
+
+Purpose:
+
+Provide a LangChain implementation of the PromptTemplate interface.
+
+Responsibilities:
+
+- Wrap LangChain ChatPromptTemplate.
+- Create system and human messages.
+- Hide LangChain prompt details from the Agent.
+
+Architecture:
+
+```
+PromptTemplate
+
+ ↓
+
+LangChainPrompt
+
+ ↓
+
+ChatPromptTemplate
+
+ ↓
+
+Messages
+```
+
+---
+
+# Agent Refactoring
+
+Updated:
+
+```
+src/ai_agent_system/agent.py
+```
+
+The Agent now receives:
+
+```
+PromptTemplate
+
++
+
+ChatModel
+```
+
+Responsibilities:
+
+- Receive user input.
+- Request messages from PromptTemplate.
+- Send messages to ChatModel.
+- Return generated response.
+
+The Agent no longer creates messages directly.
+
+## Phase 2.9 — Conversation State & Memory
+
+### Objective
+
+The objective of this phase was to introduce the first memory capability into the Agent architecture by adding conversation state management.
+
+Until this point, the Agent was stateless:
+
+```
+User Request
+
+ ↓
+
+Agent
+
+ ↓
+
+PromptTemplate
+
+ ↓
+
+ChatModel
+
+ ↓
+
+Response
+```
+
+Each interaction was independent. The system had no knowledge of previous messages.
+
+Example:
+
+```
+User:
+My name is Alvaro.
+
+Assistant:
+Nice to meet you, Alvaro.
+
+User:
+What is my name?
+
+Assistant:
+I don't know.
+```
+
+The Agent could generate responses but could not maintain context.
+
+---
+
+## Conversation State Abstraction
+
+A new responsibility was introduced:
+
+```
+Conversation State
+
+        ↓
+
+Message History
+
+        ↓
+
+Prompt Construction
+
+        ↓
+
+ChatModel
+```
+
+The purpose of the Conversation abstraction is to store and manage messages independently from the Agent logic.
+
+The Conversation component is responsible for:
+
+- Storing messages.
+- Maintaining conversation history.
+- Providing previous messages to the Agent.
+- Keeping memory logic separated from reasoning logic.
+
+---
+
+## New Architecture
+
+The Agent architecture evolved from a stateless flow:
+
+```
+User Request
+
+ ↓
+
+Agent
+
+ ↓
+
+PromptTemplate
+
+ ↓
+
+ChatModel
+
+ ↓
+
+Response
+```
+
+into a stateful conversation workflow:
+
+```
+User Request
+
+ ↓
+
+Agent
+
+ ↓
+
+Conversation State
+
+ ↓
+
+Message History
+
+ ↓
+
+PromptTemplate
+
+ ↓
+
+ChatModel
+
+ ↓
+
+Response
+
+ ↓
+
+Update Conversation State
+```
+
+The Agent now manages a conversation instead of isolated questions.
+
+---
+
+## Important Design Principle
+
+The Agent should not directly implement memory storage logic.
+
+Bad design:
+
+```
+Agent
+
+ ├── Prompt logic
+
+ ├── Model logic
+
+ └── Memory logic
+```
+
+This would make the Agent responsible for too many concerns.
+
+The improved design follows the Single Responsibility Principle:
+
+```
+Agent
+
+ ↓
+
+Conversation
+
+ ↓
+
+PromptTemplate
+
+ ↓
+
+ChatModel
+```
+
+Each component has a clear responsibility:
+
+- Agent → coordinates the workflow.
+- Conversation → manages message history.
+- PromptTemplate → builds model instructions.
+- ChatModel → generates responses.
+
+---
+
+# Implementation
+
+## Conversation Module
+
+Created:
+
+```
+src/ai_agent_system/conversation.py
+```
+
+The Conversation class provides:
+
+- Message storage.
+- Message retrieval.
+- State isolation.
+
+The class does not generate responses and does not know about any LLM provider.
+
+---
+
+## Agent Integration
+
+The Agent was updated to receive Conversation as a dependency.
+
+Before:
+
+```
+Agent
+
+ ↓
+
+ChatModel
+
+ ↓
+
+Response
+```
+
+After:
+
+```
+Agent
+
+ ↓
+
+Conversation
+
+ ↓
+
+ChatModel
+
+ ↓
+
+Response
+```
+
+The Agent workflow is now:
+
+1. Receive user input.
+2. Convert input into a HumanMessage.
+3. Store the message in Conversation.
+4. Send the complete message history to ChatModel.
+5. Receive AIMessage response.
+6. Store the AIMessage in Conversation.
+7. Return the generated response.
+
+---
+
+## Testing Strategy
+
+New tests validate that:
+
+- Conversation stores messages correctly.
+- Agent updates conversation state.
+- User messages are preserved.
+- Assistant responses are preserved.
+- Previous messages are available for future interactions.
+
+The real model is not used during unit testing.
+
+A FakeChatModel is used to verify Agent behavior independently.
+
+---
+
+## Stateful Conversation Validation
+
+The architecture was validated using a memory-aware test scenario:
+
+```
+User:
+My name is Alvaro.
+
+ ↓
+
+Conversation State
+
+ ↓
+
+User:
+What is my name?
+
+ ↓
+
+ChatModel receives previous history
+
+ ↓
+
+Assistant:
+Your name is Alvaro.
+```
+
+This confirms that message history is correctly maintained and provided to the model.
+
+---
+
+## Validation
+
+The following checks were executed successfully:
+
+```
+pre-commit run --all-files
+
+ruff      Passed
+mypy      Passed
+pytest    Passed
+```
+
+The complete test suite passed after introducing Conversation State.
+
+---
+
+## Phase 2.9 Result
+
+Phase 2.9 successfully introduced the first memory capability into the Agent system.
+
+The architecture now supports:
+
+- Stateful conversations.
+- Message history management.
+- Separation of memory from reasoning.
+- Future integration with advanced memory systems.
+
+This prepares the project for:
+
+- Tool calling.
+- Planning workflows.
+- Retrieval-Augmented Generation (RAG).
+- LangGraph-style agent workflows.
+- More autonomous AI systems.

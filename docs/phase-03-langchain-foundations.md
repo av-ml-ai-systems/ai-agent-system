@@ -19,7 +19,7 @@ Instead, the goal is to understand the core concepts that support modern LLM app
 - Understand Messages.
 - Learn Prompt Templates.
 - Learn the basics of LCEL (LangChain Expression Language).
-- Build simple educational chains.
+- Build simple chains.
 
 ---
 
@@ -514,7 +514,7 @@ Future phases will focus on:
 - Memory.
 - User interfaces.
 
-The goal is to use LangChain effectively while keeping the project simple and educational.
+The goal is to use LangChain effectively while keeping the project simple.
 
 ---
 
@@ -524,7 +524,6 @@ The goal is to use LangChain effectively while keeping the project simple and ed
 - Phase 3 focuses on using LangChain rather than redesigning the application.
 - Our current architecture already follows many LangChain design principles.
 - Future phases will extend the application's capabilities without significantly increasing its complexity.
-- The objective remains to **finish the first educational AI Agent**, not to build the ultimate AI Agent.
 
 ---
 # 3.2 — Prompt Templates
@@ -1027,7 +1026,7 @@ The goal is not to create many layers.
 
 The goal is to connect responsibilities in a simple and understandable way.
 
-For this educational project:
+For this project:
 
 - We use composition to understand LangChain.
 - We avoid unnecessary abstractions.
@@ -1192,7 +1191,7 @@ A poorly designed application can still become complex even when using Chains.
 
 The goal is to use abstractions only when they improve clarity.
 
-For this educational project:
+For this project:
 
 - We learn Chains.
 - We understand their purpose.
@@ -1652,7 +1651,7 @@ LangChain components can be replaced or modified because the application depends
 
 # Phase 3.3 Scope Reminder
 
-For this educational project:
+For this project:
 
 We will use LCEL to understand:
 
@@ -1676,7 +1675,7 @@ The objective is understanding, not creating a framework.
 
 ## Objective
 
-Implement a small educational example to demonstrate how LangChain Expression Language (LCEL) connects components together.
+Implement a small example to demonstrate how LangChain Expression Language (LCEL) connects components together.
 
 The goal is not to modify the Agent architecture.
 
@@ -2233,7 +2232,7 @@ Agents will be explored later in:
 
 ---
 
-# Relationship With Our Educational Project
+# Relationship With Our Project
 
 Our LCEL demo:
 
@@ -2352,7 +2351,7 @@ A workflow describes how components interact and how data moves through the syst
 
 # Scope Limitation
 
-For this educational project, we only need to understand:
+For this project, we only need to understand:
 
 - Runnable components.
 - Sequential execution.
@@ -2402,7 +2401,7 @@ Topics completed:
 
 - LangChain prompt integration.
 - LangChain Ollama integration.
-- LCEL educational pipeline example.
+- LCEL pipeline example.
 
 ## Validation:
 

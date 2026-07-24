@@ -341,6 +341,8 @@ Only three simple tools.
 
 5.5 — Tool Integration
 
+structured output
+
 ⬜ Agent chooses tools
 
 ⬜ Validate complete workflow
@@ -544,3 +546,9 @@ No scope creep. "While we're here..." is almost always "No."
 🥇 Golden Rule #8
 
 Every decision must improve the project as a portfolio piece or help complete the educational objective. Otherwise, don't do it.
+
+🥇 Golden Rule #9
+
+LangChain is the primary framework for building this educational AI Agent.
+
+Use LangChain whenever it clearly supports the educational objective. Do not reimplement features that LangChain already provides, but also do not use advanced LangChain abstractions before understanding the underlying concepts.

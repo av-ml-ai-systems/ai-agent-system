@@ -216,87 +216,48 @@ Pre-commit
 
 ---
 
-🟡 Phase 3 — LangChain Foundations
-Objective
+# 🟢 Phase 3 — LangChain Foundations
 
-Understand how LangChain helps organize LLM applications.
+## 🟢 Phase 3.1 — Why LangChain?
 
-The objective is not to learn every LangChain feature.
+🟢 Understand why LangChain exists.
 
-3.1 — Why LangChain?
+## 🟢 Phase 3.2 — Prompt Templates
 
-⬜ Why LangChain exists
+🟢 Understand PromptTemplate, ChatPromptTemplate, message placeholders, and prompt composition.
 
-⬜ Problems it solves
+## 🟢 Phase 3.3 — Chains
 
-⬜ LangChain architecture
+🟢 Understand LCEL fundamentals, prompt → model pipelines, RunnableSequence, and educational chain examples.
 
-⬜ Chat Models
+### Engineering Concepts
 
-⬜ Messages
+🟢 Separation of concerns.
 
-3.2 — Prompt Templates
+🟢 Dependency management.
 
-⬜ PromptTemplate
+🟢 Composition.
 
-⬜ ChatPromptTemplate
 
-⬜ Message placeholders
+---
 
-⬜ Prompt composition
+# 🟢 Phase 4 — Prompt Engineering & Structured Outputs
 
-3.3 — Chains
+## 🟢 Phase 4.1 — Prompt Engineering
 
-⬜ LCEL fundamentals
+🟢 Understand system prompts, user prompts, few-shot prompting, prompt refinement, and prompt organization.
 
-⬜ Prompt → Model pipeline
+## 🟢 Phase 4.2 — Structured Outputs
 
-⬜ RunnableSequence
+🟢 Understand JSON responses, output parsing, Pydantic models, and validation.
 
-⬜ Small educational examples
+### Engineering Concepts
 
-Engineering Concepts
+🟢 Data contracts.
 
-⬜ Separation of concerns
+🟢 Type safety.
 
-⬜ Dependency management
-
-⬜ Composition
-
-🟡 Phase 4 — Prompt Engineering & Structured Outputs
-Objective
-
-Make the Agent more reliable and predictable.
-
-4.1 — Prompt Engineering
-
-⬜ System prompts
-
-⬜ User prompts
-
-⬜ Few-shot prompting
-
-⬜ Prompt refinement
-
-⬜ Prompt organization
-
-4.2 — Structured Outputs
-
-⬜ JSON responses
-
-⬜ Output parsing
-
-⬜ Pydantic models
-
-⬜ Validation
-
-Engineering Concepts
-
-⬜ Data contracts
-
-⬜ Type safety
-
-⬜ Validation
+🟢 Validation.
 
 🟡 Phase 5 — Tool-Using Agent
 Objective

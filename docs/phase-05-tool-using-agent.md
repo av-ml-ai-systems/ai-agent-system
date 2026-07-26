@@ -1473,3 +1473,1179 @@ This will be our first example of an Agent making a decision, selecting a tool, 
 - External tools may fail, so the Agent must handle failures gracefully.
 - Separating reasoning from execution leads to better software architecture.
 - The concepts learned in Phases 3 and 4 provide the foundation for Agent decision-making.
+
+## Session 5 — Calculator Tool Summary
+
+---
+
+# Objective
+
+Implement the first real LangChain Tool of the project while applying software engineering principles learned throughout the previous phases.
+
+Unlike previous components, this module introduces an external capability that can later be used by the Agent to solve deterministic tasks.
+
+---
+
+# What Was Implemented
+
+During this phase we implemented the project's first Tool:
+
+```
+Calculator Tool
+
+↓
+
+Receives an arithmetic expression
+
+↓
+
+Safely evaluates the expression
+
+↓
+
+Returns the result
+```
+
+The Tool was implemented using LangChain's official `@tool` decorator.
+
+---
+
+# Final Architecture
+
+The module was intentionally divided into two responsibilities.
+
+```
+calculator.py
+
+│
+
+├── _ALLOWED_OPERATORS
+
+│
+
+├── _evaluate_expression()
+
+│
+
+└── @tool
+    calculator()
+```
+
+The private helper function contains the business logic.
+
+The public function exposes that logic as a LangChain Tool.
+
+This separation follows the Single Responsibility Principle.
+
+---
+
+# Safe Expression Evaluation
+
+Instead of using Python's `eval()`, the project uses the standard library's `ast` module.
+
+```
+Expression
+
+↓
+
+Abstract Syntax Tree (AST)
+
+↓
+
+Recursive Evaluation
+
+↓
+
+Result
+```
+
+Using `ast` provides two important advantages:
+
+- prevents arbitrary code execution,
+- limits supported operations to safe arithmetic expressions.
+
+Only the following operations are supported:
+
+- Addition
+- Subtraction
+- Multiplication
+- Division
+- Parentheses
+- Unary positive
+- Unary negative
+
+---
+
+# Why Not Use eval()?
+
+The Python function `eval()` executes arbitrary Python code.
+
+Example:
+
+```
+eval(user_input)
+```
+
+If the user provides malicious code, it would also be executed.
+
+The AST approach parses the expression into a syntax tree and explicitly allows only supported arithmetic operations.
+
+This is considered a significantly safer software engineering practice.
+
+---
+
+# LangChain Integration
+
+The Calculator was exposed using LangChain's Tool abstraction.
+
+Conceptually:
+
+```
+Python Function
+
+↓
+
+@tool
+
+↓
+
+LangChain Tool
+
+↓
+
+invoke()
+
+↓
+
+Result
+```
+
+This follows the project's guiding principle:
+
+> Use LangChain whenever it clearly supports the educational objective.
+
+---
+
+# Testing Strategy
+
+The project uses two different testing levels.
+
+## Unit Tests
+
+Unit tests verify individual components independently.
+
+```
+_evaluate_expression()
+
+↓
+
+Correct arithmetic?
+```
+
+The unit tests validate:
+
+- addition,
+- multiplication,
+- division,
+- parentheses,
+- negative numbers,
+- invalid operators,
+- invalid expressions.
+
+---
+
+## Integration Tests
+
+Integration tests verify that multiple components work together.
+
+```
+LangChain Tool
+
+↓
+
+AST Parser
+
+↓
+
+Arithmetic Evaluator
+
+↓
+
+Result
+```
+
+The integration test confirms that the complete LangChain Tool behaves correctly when invoked through its public interface.
+
+---
+
+# Validation
+
+The implementation successfully passed all project validation steps.
+
+```
+Ruff
+
+↓
+
+Passed
+
+↓
+
+MyPy
+
+↓
+
+Passed
+
+↓
+
+Pytest
+
+↓
+
+14 Tests Passed
+```
+
+This confirms that the implementation is:
+
+- syntactically correct,
+- type-safe,
+- fully tested,
+- integrated into the existing project.
+
+---
+
+# Engineering Concepts Learned
+
+This phase introduced several important software engineering concepts.
+
+## Separation of Responsibilities
+
+```
+Business Logic
+
+↓
+
+Independent Function
+
+↓
+
+Framework Integration
+
+↓
+
+LangChain Tool
+```
+
+The Tool is responsible for interacting with LangChain.
+
+The arithmetic evaluator is responsible for performing calculations.
+
+---
+
+## Encapsulation
+
+Internal implementation details remain private.
+
+External components interact only through the Tool's public interface.
+
+---
+
+## Security
+
+User input should never be executed directly.
+
+Safe parsing and explicit validation reduce unnecessary security risks.
+
+---
+
+## Framework Integration
+
+Rather than creating our own Tool abstraction, we leveraged LangChain's official implementation.
+
+This reduces unnecessary complexity while improving compatibility with future Agent workflows.
+
+---
+
+# Connection with Previous Phases
+
+This phase combines concepts introduced throughout the roadmap.
+
+```
+Prompt Engineering
+
+↓
+
+Structured Outputs
+
+↓
+
+LangChain Foundations
+
+↓
+
+Tool Abstraction
+
+↓
+
+Calculator Tool
+```
+
+Each previous phase prepared part of the knowledge required to implement the first Tool.
+
+---
+
+# Looking Ahead
+
+The next phase introduces another external capability.
+
+```
+Calculator Tool
+
+↓
+
+Clock Tool
+
+↓
+
+File Reader Tool
+
+↓
+
+Tool Integration
+
+↓
+
+Reasoning Agent
+```
+
+Each Tool expands the Agent's capabilities while maintaining the same architectural principles established in this phase.
+
+---
+
+# Key Takeaways
+
+- A Tool extends the capabilities of an LLM.
+- Business logic and framework integration should remain separate.
+- LangChain's `@tool` decorator provides a simple and standardized Tool abstraction.
+- Safe parsing using `ast` is preferable to `eval()` for arithmetic expressions.
+- Unit tests validate individual components.
+- Integration tests validate interactions between components.
+- Small, well-defined Tools are easier to understand, test, and maintain.
+- The Calculator Tool establishes the architectural pattern that future Tools will follow throughout the remainder of the project.
+
+## Session 4 — Clock Tool Fundamentals
+
+---
+
+# Objective
+
+Understand why AI Agents require a Clock Tool and how it differs from the Calculator Tool implemented in the previous phase.
+
+The goal of this session is to understand that not all Tools perform computations. Some Tools exist to provide the Agent with access to information that changes over time.
+
+---
+
+# Why Does an AI Agent Need a Clock Tool?
+
+Large Language Models possess extensive knowledge, but that knowledge is static.
+
+An LLM cannot reliably answer questions whose answers depend on the current moment.
+
+For example:
+
+```
+User:
+
+What time is it right now?
+```
+
+The LLM has no reliable way to know the current system time.
+
+Instead, it must delegate that responsibility to an external Tool.
+
+Conceptually:
+
+```
+User
+
+↓
+
+"What time is it?"
+
+↓
+
+Clock Tool
+
+↓
+
+Current Date and Time
+
+↓
+
+Agent Response
+```
+
+---
+
+# Static Knowledge vs Dynamic Information
+
+One of the most important distinctions when designing AI Agents is understanding the difference between static knowledge and dynamic information.
+
+## Static Knowledge
+
+Information that does not change frequently.
+
+Examples:
+
+- What is Machine Learning?
+- Explain Neural Networks.
+- What is Gradient Descent?
+
+These questions can usually be answered directly by the LLM.
+
+---
+
+## Dynamic Information
+
+Information that changes continuously.
+
+Examples:
+
+- Current time.
+- Current date.
+- Current weather.
+- Latest stock price.
+- Available disk space.
+
+These questions require an external capability.
+
+```
+LLM
+
+↓
+
+Needs Current Information
+
+↓
+
+External Tool
+
+↓
+
+Updated Information
+```
+
+---
+
+# The Clock Tool
+
+The Clock Tool is responsible for one task only:
+
+```
+Provide the current system date and time.
+```
+
+It should not:
+
+- schedule events,
+- calculate time zones,
+- manage calendars,
+- create reminders,
+- perform date arithmetic.
+
+Its responsibility is intentionally small.
+
+This follows the Single Responsibility Principle introduced earlier in the roadmap.
+
+---
+
+# Calculator vs Clock
+
+Although both are LangChain Tools, they solve different kinds of problems.
+
+## Calculator Tool
+
+```
+Input
+
+↓
+
+Arithmetic Expression
+
+↓
+
+Computation
+
+↓
+
+Result
+```
+
+The same input always produces the same output.
+
+Example:
+
+```
+25 * (8 + 2)
+
+↓
+
+250
+```
+
+---
+
+## Clock Tool
+
+```
+Input
+
+↓
+
+Request Current Time
+
+↓
+
+Retrieve System Time
+
+↓
+
+Result
+```
+
+The output changes every time it is executed.
+
+Example:
+
+```
+Current Time
+
+↓
+
+10:30 AM
+```
+
+Running the Tool again a few seconds later produces a different result.
+
+---
+
+# Pure Functions vs External State
+
+This phase introduces an important software engineering concept.
+
+## Pure Function
+
+A pure function always produces the same output for the same input.
+
+```
+Input
+
+↓
+
+Function
+
+↓
+
+Output
+```
+
+Example:
+
+```
+5 + 3
+
+↓
+
+8
+```
+
+No external information is required.
+
+---
+
+## External State
+
+Some software depends on information outside the program.
+
+```
+Program
+
+↓
+
+External Environment
+
+↓
+
+Result
+```
+
+The Clock Tool depends on the computer's current date and time.
+
+Even if the user provides exactly the same request, the output changes as time passes.
+
+---
+
+# Why Is This Important?
+
+AI Agents frequently interact with external systems.
+
+Examples include:
+
+- operating systems,
+- databases,
+- APIs,
+- cloud services,
+- sensors.
+
+The Clock Tool is our first example of a Tool that retrieves information from the external environment instead of computing it internally.
+
+Although simple, it introduces an architectural pattern that will be reused throughout future projects.
+
+---
+
+# Architectural Pattern
+
+The Clock Tool follows exactly the same architecture as the Calculator Tool.
+
+```
+Business Logic
+
+↓
+
+LangChain Tool
+
+↓
+
+Agent
+```
+
+The business logic retrieves the current time.
+
+The LangChain Tool exposes that functionality to the Agent.
+
+Keeping these responsibilities separate improves maintainability and testability.
+
+---
+
+# Educational Scope
+
+For this educational repository, the Clock Tool will provide only:
+
+- current date,
+- current time,
+- ISO formatted timestamp.
+
+Advanced functionality intentionally remains outside the scope of this project.
+
+Examples of excluded features:
+
+- time zone conversion,
+- daylight saving calculations,
+- scheduling,
+- alarms,
+- recurring events.
+
+These belong to more advanced Agent systems.
+
+---
+
+# Connection with Previous Phases
+
+The Clock Tool builds directly on the concepts learned earlier.
+
+```
+LangChain Foundations
+
+↓
+
+Tool Abstraction
+
+↓
+
+Calculator Tool
+
+↓
+
+Clock Tool
+```
+
+Rather than introducing a new architectural style, this phase reinforces the existing design while applying it to a different category of Tool.
+
+---
+
+# Looking Ahead
+
+After implementing the Clock Tool, the Agent will possess two independent capabilities.
+
+```
+Calculator Tool
+
++
+
+Clock Tool
+
+↓
+
+Tool Integration
+
+↓
+
+Reasoning Agent
+```
+
+Each additional Tool expands the Agent's abilities without changing the overall architecture.
+
+---
+
+# Key Takeaways
+
+- Not every Tool performs computations.
+- Some Tools retrieve dynamic information from the external environment.
+- Large Language Models cannot reliably answer questions that depend on the current moment.
+- The Clock Tool provides access to current system date and time.
+- The Clock Tool follows the same architectural pattern established by the Calculator Tool.
+- Separating business logic from framework integration improves maintainability and testing.
+- The Clock Tool introduces the concept of external state, preparing the foundation for future integrations with APIs, databases, and cloud services.
+
+## Session 5 — Clock Tool Summary
+
+---
+
+# Objective
+
+Implement the second LangChain Tool of the project while reinforcing the architectural pattern established with the Calculator Tool.
+
+Unlike the Calculator Tool, which performs deterministic computations, the Clock Tool provides access to dynamic information obtained from the external environment.
+
+---
+
+# What Was Implemented
+
+During this phase we implemented the project's second LangChain Tool.
+
+```
+Clock Tool
+
+↓
+
+Request Current Date and Time
+
+↓
+
+Retrieve System Time
+
+↓
+
+Return ISO Timestamp
+```
+
+The Tool was implemented using LangChain's official `@tool` decorator and follows the same architecture introduced in the previous phase.
+
+---
+
+# Final Architecture
+
+The Clock Tool intentionally separates business logic from framework integration.
+
+```
+clock.py
+
+│
+
+├── _get_current_datetime()
+
+│
+
+└── @tool
+    current_datetime()
+```
+
+The helper function contains the business logic.
+
+The LangChain Tool exposes that logic to the Agent.
+
+This architecture follows the Single Responsibility Principle.
+
+---
+
+# Business Logic
+
+The business logic retrieves the current system date and time using Python's standard library.
+
+```
+datetime.now()
+
+↓
+
+ISO 8601 String
+
+↓
+
+Return
+```
+
+The helper returns the current timestamp formatted using the ISO 8601 standard.
+
+Example:
+
+```
+2026-07-25T18:49:50
+```
+
+---
+
+# Why ISO 8601?
+
+ISO 8601 is the international standard for representing dates and times.
+
+Advantages include:
+
+- unambiguous representation,
+- machine readable,
+- widely supported,
+- easy conversion into Python datetime objects.
+
+Using a standard format improves interoperability with future components.
+
+---
+
+# Calculator vs Clock
+
+Although both are LangChain Tools, they solve different categories of problems.
+
+## Calculator Tool
+
+```
+Input
+
+↓
+
+Arithmetic Expression
+
+↓
+
+Computation
+
+↓
+
+Result
+```
+
+The same input always produces the same output.
+
+---
+
+## Clock Tool
+
+```
+Input
+
+↓
+
+Current Date Request
+
+↓
+
+System Clock
+
+↓
+
+Current Timestamp
+```
+
+The output changes every time the Tool executes.
+
+---
+
+# Pure Functions vs External State
+
+The Calculator Tool introduced pure computation.
+
+The Clock Tool introduces external state.
+
+## Pure Function
+
+```
+Input
+
+↓
+
+Function
+
+↓
+
+Always Same Output
+```
+
+Example:
+
+```
+5 + 3
+
+↓
+
+8
+```
+
+---
+
+## External State
+
+```
+Program
+
+↓
+
+Operating System
+
+↓
+
+Current Time
+
+↓
+
+Result
+```
+
+The Clock Tool depends on information outside the application.
+
+Even if the same request is repeated, the output naturally changes over time.
+
+---
+
+# LangChain Integration
+
+The Clock Tool follows exactly the same integration pattern established by the Calculator Tool.
+
+```
+Business Logic
+
+↓
+
+LangChain Tool
+
+↓
+
+invoke()
+
+↓
+
+Result
+```
+
+Maintaining the same architecture across multiple Tools improves consistency and maintainability.
+
+---
+
+# Testing Strategy
+
+As in the previous phase, two levels of testing were implemented.
+
+## Unit Tests
+
+Unit tests verify individual components independently.
+
+```
+_get_current_datetime()
+
+↓
+
+Valid ISO String?
+```
+
+The unit tests verify:
+
+- return type,
+- ISO formatting,
+- LangChain Tool return type,
+- valid datetime conversion.
+
+---
+
+## Integration Tests
+
+Integration tests verify that multiple components work together correctly.
+
+```
+LangChain Tool
+
+↓
+
+Tool Invocation
+
+↓
+
+Business Logic
+
+↓
+
+datetime.now()
+
+↓
+
+ISO Timestamp
+```
+
+The integration test confirms that the complete Tool workflow behaves correctly.
+
+---
+
+# Validation
+
+The complete implementation successfully passed all project validation steps.
+
+```
+Ruff
+
+↓
+
+Passed
+
+↓
+
+MyPy
+
+↓
+
+Passed
+
+↓
+
+Pytest
+
+↓
+
+19 Tests Passed
+```
+
+This confirms that the Clock Tool is:
+
+- syntactically correct,
+- type-safe,
+- fully tested,
+- correctly integrated into the project.
+
+---
+
+# Engineering Concepts Learned
+
+This phase reinforced several important software engineering principles.
+
+## Consistent Architecture
+
+Every Tool should follow the same architectural pattern.
+
+```
+Business Logic
+
+↓
+
+LangChain Tool
+
+↓
+
+Agent
+```
+
+Consistency simplifies maintenance and future development.
+
+---
+
+## External Dependencies
+
+Some software components depend on information that changes continuously.
+
+Examples include:
+
+- current time,
+- weather,
+- databases,
+- APIs,
+- cloud services.
+
+The Clock Tool introduces this category of software components.
+
+---
+
+## Separation of Responsibilities
+
+The helper retrieves the current datetime.
+
+The LangChain Tool exposes that functionality.
+
+Each component has exactly one responsibility.
+
+---
+
+## Standard Library Usage
+
+The implementation demonstrates that not every problem requires an external dependency.
+
+Python's standard library already provides reliable support for date and time management.
+
+---
+
+# Connection with Previous Phases
+
+The Clock Tool extends the architecture introduced by the Calculator Tool.
+
+```
+Prompt Engineering
+
+↓
+
+Structured Outputs
+
+↓
+
+Calculator Tool
+
+↓
+
+Clock Tool
+```
+
+Rather than introducing new architectural concepts, this phase reinforces existing design principles while applying them to a different category of Tool.
+
+---
+
+# Looking Ahead
+
+The next Tool will provide access to another category of external information.
+
+```
+Calculator Tool
+
+↓
+
+Clock Tool
+
+↓
+
+File Reader Tool
+
+↓
+
+Tool Integration
+
+↓
+
+Reasoning Agent
+```
+
+By the end of Phase 5, the Agent will possess three independent capabilities that will later be orchestrated by the reasoning workflow.
+
+---
+
+# Key Takeaways
+
+- Not all Tools perform computations.
+- Some Tools retrieve dynamic information from the external environment.
+- The Clock Tool introduces the concept of external state.
+- ISO 8601 provides a standard representation for dates and times.
+- Business logic and framework integration should remain separate.
+- Consistent architecture across Tools improves maintainability.
+- Unit tests validate individual components.
+- Integration tests validate complete workflows.
+- The Clock Tool reinforces the architectural pattern that future Tools will continue to follow.

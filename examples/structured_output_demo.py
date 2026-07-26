@@ -33,21 +33,15 @@ class TopicSummary(BaseModel):
         Difficulty level of the explanation.
     """
 
-    topic: str = Field(
-        description="The main topic discussed."
-    )
+    topic: str = Field(description="The main topic discussed.")
 
-    summary: str = Field(
-        description="A short explanation of the topic."
-    )
+    summary: str = Field(description="A short explanation of the topic.")
 
     difficulty: str = Field(
-        description=(
-            "Difficulty level: Beginner, Intermediate, "
-            "or Advanced."
-        )
+        description=("Difficulty level: Beginner, Intermediate, or Advanced.")
     )
-    
+
+
 chat_model = ChatOllama(
     model="qwen3:4b",
 )
@@ -56,9 +50,7 @@ structured_chat_model = chat_model.with_structured_output(
     TopicSummary,
 )
 
-response = structured_chat_model.invoke(
-    "Explain what Machine Learning is."
-)
+response = structured_chat_model.invoke("Explain what Machine Learning is.")
 
 print("Response Type:")
 print(type(response))

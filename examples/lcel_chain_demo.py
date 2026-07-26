@@ -52,9 +52,7 @@ def main() -> None:
     chain = prompt | model
 
     response = chain.invoke(
-        {
-            "question": "Explain what an AI agent is in one sentence."
-        }
+        {"question": "Explain what an AI agent is in one sentence."}
     )
 
     print(response.content)

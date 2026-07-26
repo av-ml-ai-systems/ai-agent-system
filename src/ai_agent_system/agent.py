@@ -88,9 +88,7 @@ class Agent:
                 message,
             )
 
-        response: AIMessage = self.chat_model.invoke(
-            self.conversation.messages()
-        )
+        response: AIMessage = self.chat_model.invoke(self.conversation.messages())
 
         self.conversation.add_message(
             response,

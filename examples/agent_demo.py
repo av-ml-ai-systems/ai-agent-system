@@ -36,9 +36,7 @@ def main() -> None:
         prompt,
     )
 
-    response = agent.answer(
-        "Introduce yourself in one sentence."
-    )
+    response = agent.answer("Introduce yourself in one sentence.")
 
     print("\nAgent Response:\n")
     print(response)

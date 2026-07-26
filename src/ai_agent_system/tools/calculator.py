@@ -25,6 +25,7 @@ _ALLOWED_OPERATORS = {
     ast.Div: operator.truediv,
 }
 
+
 def _evaluate_expression(node: ast.AST) -> float:
     """
     Recursively evaluate an arithmetic expression represented
@@ -56,7 +57,6 @@ def _evaluate_expression(node: ast.AST) -> float:
         return operation(left, right)
 
     if isinstance(node, ast.UnaryOp):
-
         if isinstance(node.op, ast.USub):
             return -_evaluate_expression(node.operand)
 
@@ -64,6 +64,7 @@ def _evaluate_expression(node: ast.AST) -> float:
             return _evaluate_expression(node.operand)
 
     raise ValueError("Invalid arithmetic expression.")
+
 
 @tool
 def calculator(expression: str) -> float:
@@ -96,6 +97,4 @@ def calculator(expression: str) -> float:
         return _evaluate_expression(tree.body)
 
     except SyntaxError as exc:
-        raise ValueError(
-            "Invalid arithmetic expression."
-        ) from exc
+        raise ValueError("Invalid arithmetic expression.") from exc

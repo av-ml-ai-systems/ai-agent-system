@@ -26,21 +26,15 @@ def main() -> None:
 
     print("\n=== Experiment 1: Simple String Prompt ===\n")
 
-    response = llm.invoke(
-        "Introduce yourself in one sentence."
-    )
+    response = llm.invoke("Introduce yourself in one sentence.")
 
     print(response.content)
 
     print("\n=== Experiment 2: Structured Messages ===\n")
 
     messages = [
-        SystemMessage(
-            content="You are a concise AI assistant."
-        ),
-        HumanMessage(
-            content="Introduce yourself in one sentence."
-        ),
+        SystemMessage(content="You are a concise AI assistant."),
+        HumanMessage(content="Introduce yourself in one sentence."),
     ]
 
     response = llm.invoke(messages)

@@ -35,9 +35,7 @@ class FakeChatModel(ChatModel):
         Return deterministic response.
         """
 
-        return AIMessage(
-            content="This is a fake response."
-        )
+        return AIMessage(content="This is a fake response.")
 
 
 class FakePrompt(PromptTemplate):
@@ -73,13 +71,9 @@ class MemoryAwareFakeChatModel(ChatModel):
     ) -> AIMessage:
 
         if len(messages) >= 3:
-            return AIMessage(
-                content="Your name is Alvaro."
-            )
+            return AIMessage(content="Your name is Alvaro.")
 
-        return AIMessage(
-            content="I do not know your name."
-        )
+        return AIMessage(content="I do not know your name.")
 
 
 def create_agent(
@@ -101,13 +95,9 @@ def test_agent_returns_chat_model_response() -> None:
     Verify Agent returns ChatModel response.
     """
 
-    agent = create_agent(
-        FakeChatModel()
-    )
+    agent = create_agent(FakeChatModel())
 
-    response = agent.answer(
-        "What is artificial intelligence?"
-    )
+    response = agent.answer("What is artificial intelligence?")
 
     assert response == "This is a fake response."
 
@@ -125,9 +115,7 @@ def test_agent_updates_conversation_state() -> None:
         FakePrompt(),
     )
 
-    agent.answer(
-        "Hello"
-    )
+    agent.answer("Hello")
 
     messages = conversation.messages()
 
@@ -149,13 +137,9 @@ def test_agent_uses_previous_conversation_context() -> None:
         FakePrompt(),
     )
 
-    first_response = agent.answer(
-        "My name is Alvaro."
-    )
+    first_response = agent.answer("My name is Alvaro.")
 
-    second_response = agent.answer(
-        "What is my name?"
-    )
+    second_response = agent.answer("What is my name?")
 
     assert first_response == "I do not know your name."
     assert second_response == "Your name is Alvaro."

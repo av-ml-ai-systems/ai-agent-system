@@ -16,6 +16,7 @@ from datetime import datetime
 
 from langchain_core.tools import tool
 
+
 def _get_current_datetime() -> str:
     """
     Return the current system date and time.
@@ -27,6 +28,7 @@ def _get_current_datetime() -> str:
     """
 
     return datetime.now().isoformat(timespec="seconds")
+
 
 @tool
 def current_datetime() -> str:

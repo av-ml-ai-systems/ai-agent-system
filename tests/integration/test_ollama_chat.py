@@ -23,11 +23,7 @@ def test_ollama_chat_generation() -> None:
         model="qwen3:4b",
     )
 
-    messages = [
-        HumanMessage(
-            content="Introduce yourself in one sentence."
-        )
-    ]
+    messages = [HumanMessage(content="Introduce yourself in one sentence.")]
 
     response = chat_model.invoke(messages)
 

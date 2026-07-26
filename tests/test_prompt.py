@@ -20,11 +20,7 @@ class FakePrompt(PromptTemplate):
         **kwargs: str,
     ) -> list[HumanMessage]:
 
-        return [
-            HumanMessage(
-                content=kwargs["question"]
-            )
-        ]
+        return [HumanMessage(content=kwargs["question"])]
 
 
 def test_prompt_template_creates_messages() -> None:
@@ -34,9 +30,7 @@ def test_prompt_template_creates_messages() -> None:
 
     prompt = FakePrompt()
 
-    messages = prompt.format_messages(
-        question="What is AI?"
-    )
+    messages = prompt.format_messages(question="What is AI?")
 
     assert len(messages) == 1
     assert messages[0].content == "What is AI?"

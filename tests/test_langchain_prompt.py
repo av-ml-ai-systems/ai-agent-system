@@ -18,16 +18,10 @@ def test_langchain_prompt_generates_messages() -> None:
         human_template="{question}",
     )
 
-    messages = prompt.format_messages(
-        question="What is machine learning?"
-    )
+    messages = prompt.format_messages(question="What is machine learning?")
 
     assert len(messages) == 2
 
-    assert messages[0].content == (
-        "You are a helpful assistant."
-    )
+    assert messages[0].content == ("You are a helpful assistant.")
 
-    assert messages[1].content == (
-        "What is machine learning?"
-    )
+    assert messages[1].content == ("What is machine learning?")

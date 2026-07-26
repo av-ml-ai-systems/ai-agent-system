@@ -259,62 +259,65 @@ Pre-commit
 
 🟢 Validation.
 
-🟡 Phase 5 — Tool-Using Agent
-Objective
+# 🟢 Phase 5 — Tool-Using Agent
 
-Transform the chatbot into an educational AI Agent.
+## 🟢 Phase 5.1 — Tool Fundamentals
 
-Only three simple tools.
+🟢 Understand what a Tool is.
 
-5.1 — Tool Fundamentals
+🟢 Understand Tool Calling.
 
-⬜ What is a Tool?
+🟢 Understand how an Agent decides when to use a Tool.
 
-⬜ Tool Calling
+🟢 Understand external capabilities and why LLMs need them.
 
-⬜ Agent decisions
+---
 
-⬜ External capabilities
+## 🟢 Phase 5.2 — Calculator Tool
 
-5.2 — Calculator Tool
+🟢 Implement the Calculator Tool.
 
-⬜ Implement calculator
+🟢 Create unit tests.
 
-⬜ Unit tests
+🟢 Create integration tests.
 
-⬜ Integration test
+---
 
-5.3 — Clock Tool
+## 🟢 Phase 5.3 — Clock Tool
 
-⬜ Current date/time
+🟢 Implement the Clock Tool.
 
-⬜ Unit tests
+🟢 Create unit tests.
 
-⬜ Integration test
+🟢 Create integration tests.
 
-5.4 — File Reader Tool
+---
 
-⬜ Read local text files
+## 🟡 Phase 5.4 — File Reader Tool
 
-⬜ Unit tests
+⬜ Read local text files.
 
-⬜ Integration test
+⬜ Create unit tests.
 
-5.5 — Tool Integration
+⬜ Create integration tests.
 
-structured output
+---
 
-⬜ Agent chooses tools
+## 🟡 Phase 5.5 — Tool Integration
 
-⬜ Validate complete workflow
+⬜ Integrate structured outputs with tools.
 
-Engineering Concepts
+⬜ Allow the Agent to choose the appropriate Tool.
 
-⬜ Composition
+⬜ Validate the complete workflow.
 
-⬜ Single Responsibility
+### Engineering Concepts
 
-⬜ Open/Closed Principle
+⬜ Composition.
+
+⬜ Single Responsibility Principle (SRP).
+
+⬜ Open/Closed Principle (OCP).
 
 🟡 Phase 6 — Reasoning & Agent Workflow
 Objective

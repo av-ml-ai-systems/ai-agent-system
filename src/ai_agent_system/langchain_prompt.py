@@ -47,6 +47,4 @@ class LangChainPrompt(PromptTemplate):
         Generate messages from template variables.
         """
 
-        return self._prompt.format_messages(
-            **kwargs
-        )
+        return self._prompt.format_messages(**kwargs)

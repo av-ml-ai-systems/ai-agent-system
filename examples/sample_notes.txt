@@ -1,0 +1,5 @@
+Machine Learning enables computers to learn patterns from data.
+
+Large Language Models are one application of Machine Learning.
+
+LangChain helps developers build AI applications using language models and tools.

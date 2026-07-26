@@ -17,11 +17,7 @@ def test_conversation_stores_messages() -> None:
 
     conversation = Conversation()
 
-    conversation.add_message(
-        HumanMessage(
-            content="Hello"
-        )
-    )
+    conversation.add_message(HumanMessage(content="Hello"))
 
     messages = conversation.messages()
 

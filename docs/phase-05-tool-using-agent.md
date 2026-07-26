@@ -2649,3 +2649,1039 @@ By the end of Phase 5, the Agent will possess three independent capabilities tha
 - Unit tests validate individual components.
 - Integration tests validate complete workflows.
 - The Clock Tool reinforces the architectural pattern that future Tools will continue to follow.
+
+# Phase 5.4 — File Reader Tool
+
+## Session 1 — File Reader Tool Fundamentals
+
+---
+
+# Objective
+
+Understand why AI Agents require a File Reader Tool and how it differs from the previously implemented Calculator and Clock Tools.
+
+The goal of this session is to introduce the Agent's first interaction with the local file system while maintaining the same software engineering principles established throughout the project.
+
+---
+
+# Why Does an AI Agent Need a File Reader Tool?
+
+Large Language Models cannot directly access files stored on a user's computer.
+
+For example, if a user asks:
+
+```
+Summarize the contents of notes.txt.
+```
+
+the LLM has no built-in ability to open that file.
+
+Instead, the Agent must delegate this task to an external Tool.
+
+Conceptually:
+
+```
+User
+
+↓
+
+"Read notes.txt"
+
+↓
+
+File Reader Tool
+
+↓
+
+File Contents
+
+↓
+
+Agent Response
+```
+
+The Tool acts as the bridge between the language model and the operating system.
+
+---
+
+# External Capabilities
+
+The Calculator Tool introduced computation.
+
+The Clock Tool introduced access to dynamic system information.
+
+The File Reader Tool introduces access to persistent local data.
+
+```
+Calculator
+
+↓
+
+Compute
+
+
+Clock
+
+↓
+
+Retrieve Current Time
+
+
+File Reader
+
+↓
+
+Read Local Information
+```
+
+These represent three different categories of Agent capabilities.
+
+---
+
+# What Is a File Reader Tool?
+
+The File Reader Tool is responsible for one task only:
+
+```
+Read the contents of a local text file.
+```
+
+It should not:
+
+- modify files,
+- delete files,
+- search folders,
+- rename files,
+- create files,
+- process PDFs,
+- parse spreadsheets.
+
+Those capabilities belong to future projects.
+
+Keeping the Tool focused follows the Single Responsibility Principle.
+
+---
+
+# Reading vs Understanding
+
+An important distinction must be made.
+
+The Tool reads the file.
+
+The LLM understands the file.
+
+```
+File Reader Tool
+
+↓
+
+Text
+
+↓
+
+Language Model
+
+↓
+
+Reasoning
+```
+
+The Tool does not summarize, analyze, or explain the contents.
+
+It simply provides the raw text.
+
+---
+
+# Local File System
+
+For this educational project, the Tool only accesses local text files.
+
+Conceptually:
+
+```
+Project
+
+↓
+
+Operating System
+
+↓
+
+Text File
+
+↓
+
+Contents
+```
+
+No cloud storage or remote file systems are involved.
+
+---
+
+# Why Only Text Files?
+
+Text files are:
+
+- simple,
+- human-readable,
+- easy to test,
+- independent of third-party libraries.
+
+Supporting more complex formats such as PDF or Word documents would introduce unnecessary complexity and violate the project's educational scope.
+
+---
+
+# Security Considerations
+
+Reading files is more sensitive than performing arithmetic.
+
+An unrestricted File Reader could potentially access confidential information.
+
+For this educational implementation, we intentionally keep the scope very small.
+
+The Tool will only demonstrate how file access works.
+
+More advanced security mechanisms, such as directory restrictions and permission management, belong to future repositories.
+
+---
+
+# Architectural Pattern
+
+The File Reader Tool follows exactly the same architecture as every previous Tool.
+
+```
+Business Logic
+
+↓
+
+LangChain Tool
+
+↓
+
+Agent
+```
+
+The business logic reads the file.
+
+The LangChain Tool exposes that functionality.
+
+This consistency is intentional and makes every Tool easier to understand and maintain.
+
+---
+
+# Connection with Previous Phases
+
+The project now contains three complementary Tool categories.
+
+```
+Calculator
+
+↓
+
+Clock
+
+↓
+
+File Reader
+```
+
+Each Tool extends the Agent's capabilities without changing the overall architecture.
+
+---
+
+# Looking Ahead
+
+After implementing the File Reader Tool, the Agent will possess three independent capabilities.
+
+```
+Calculator
+
++
+
+Clock
+
++
+
+File Reader
+
+↓
+
+Tool Integration
+
+↓
+
+Reasoning Agent
+```
+
+The next phase will teach the Agent how to decide which Tool to use for a given user request.
+
+---
+
+# Key Takeaways
+
+- A File Reader Tool provides access to local information stored outside the LLM.
+- Reading a file and understanding its contents are separate responsibilities.
+- The Tool retrieves raw text; the LLM performs reasoning.
+- Limiting the Tool to plain text files keeps the implementation simple and educational.
+- The File Reader Tool follows the same architectural pattern established by the Calculator and Clock Tools.
+- Consistent architecture simplifies future Tool integration and Agent reasoning.
+
+## Session 2 — Designing the File Reader Tool
+
+---
+
+# Objective
+
+Design the architecture of the File Reader Tool before implementing it.
+
+As with every previous Tool, implementation follows design—not the other way around.
+
+---
+
+# What Should the Tool Do?
+
+The responsibility of the File Reader Tool is intentionally small.
+
+```
+Input
+
+↓
+
+Path to a text file
+
+↓
+
+Read file contents
+
+↓
+
+Return text
+```
+
+Nothing more.
+
+---
+
+# What Should the Tool NOT Do?
+
+To keep the educational objective focused, the Tool will not:
+
+- summarize documents,
+- answer questions about the file,
+- search folders,
+- edit files,
+- create files,
+- delete files,
+- process PDFs,
+- process Word documents,
+- process images.
+
+Those capabilities belong to future repositories.
+
+---
+
+# Single Responsibility
+
+The File Reader Tool has one responsibility.
+
+```
+Read a text file.
+
+↓
+
+Return its contents.
+```
+
+Understanding the text is **not** its responsibility.
+
+The language model will perform that task later.
+
+---
+
+# Separation of Responsibilities
+
+As in the previous Tools, responsibilities remain clearly separated.
+
+```
+Business Logic
+
+↓
+
+Read File
+
+↓
+
+Return Text
+
+
+
+LangChain Tool
+
+↓
+
+Expose Functionality
+
+↓
+
+Agent
+```
+
+This architecture keeps the Tool independent from LangChain.
+
+---
+
+# Expected Inputs
+
+The Tool accepts one input.
+
+```
+file_path
+```
+
+Example:
+
+```
+notes/example.txt
+```
+
+The input should identify the file to read.
+
+---
+
+# Expected Output
+
+The Tool returns one output.
+
+```
+Raw text
+```
+
+Example:
+
+```
+Machine Learning is a branch of Artificial Intelligence...
+```
+
+No processing is performed.
+
+The Tool simply returns exactly what the file contains.
+
+---
+
+# Error Handling
+
+Software should anticipate failures.
+
+Possible situations include:
+
+- file does not exist,
+- invalid path,
+- insufficient permissions,
+- empty file.
+
+For this educational project, we will handle errors gracefully.
+
+Instead of crashing, the Tool should return a readable error message.
+
+Conceptually:
+
+```
+Read File
+
+↓
+
+Success?
+
+├── Yes → Return Contents
+
+└── No → Return Error Message
+```
+
+This improves robustness while keeping the implementation simple.
+
+---
+
+# Why Return an Error Instead of Raising One?
+
+In production systems, exceptions are often propagated and handled elsewhere.
+
+For this educational Agent, returning a readable error message makes demonstrations easier and keeps the focus on understanding Tool behavior rather than exception handling.
+
+We will revisit more advanced error management in future projects.
+
+---
+
+# Architectural Pattern
+
+The File Reader Tool follows exactly the same structure as the previous Tools.
+
+```
+file_reader.py
+
+│
+
+├── _read_text_file()
+
+│
+
+└── @tool
+    read_text_file()
+```
+
+The helper contains the business logic.
+
+The LangChain Tool exposes that logic.
+
+---
+
+# Reusing an Existing Pattern
+
+The architecture is now familiar.
+
+```
+Calculator
+
+↓
+
+Business Logic
+
+↓
+
+LangChain Tool
+
+
+
+Clock
+
+↓
+
+Business Logic
+
+↓
+
+LangChain Tool
+
+
+
+File Reader
+
+↓
+
+Business Logic
+
+↓
+
+LangChain Tool
+```
+
+Every Tool follows the same engineering pattern.
+
+This consistency improves readability, testing, and maintenance.
+
+---
+
+# Engineering Concepts
+
+This phase reinforces several important engineering ideas.
+
+## Single Responsibility Principle
+
+Each Tool performs one task.
+
+---
+
+## Separation of Concerns
+
+Business logic remains independent from the framework.
+
+---
+
+## Reusability
+
+The helper function could be reused outside LangChain if needed.
+
+---
+
+## Maintainability
+
+Consistent architecture makes future Tools easier to implement.
+
+---
+
+# Looking Ahead
+
+The next session will discuss testing and integration before implementation begins.
+
+```
+Theory
+
+↓
+
+Design
+
+↓
+
+Testing Strategy
+
+↓
+
+Implementation
+```
+
+---
+
+# Key Takeaways
+
+- The File Reader Tool has one responsibility: read a text file.
+- The Tool returns raw text without interpreting it.
+- Business logic and LangChain integration remain separated.
+- Error handling should be simple, predictable, and educational.
+- Reusing the same architectural pattern improves consistency across the project.
+
+## Session 3 — Testing Strategy and Security
+
+---
+
+# Objective
+
+Understand how the File Reader Tool should be tested and why reading files introduces new software engineering considerations.
+
+Unlike the Calculator and Clock Tools, the File Reader Tool interacts directly with the operating system's file system.
+
+Although this educational implementation remains simple, it introduces important concepts regarding robustness and security.
+
+---
+
+# Why Testing Is Important
+
+Reading files involves resources outside the application itself.
+
+Unlike pure computations, file operations depend on the operating system.
+
+Possible situations include:
+
+- the file exists,
+- the file does not exist,
+- the file is empty,
+- the path is invalid,
+- the application lacks permission to read the file.
+
+Testing ensures that the Tool behaves predictably under each of these conditions.
+
+---
+
+# Unit Testing
+
+Unit tests focus on the business logic only.
+
+Conceptually:
+
+```
+_read_text_file()
+
+↓
+
+Read File
+
+↓
+
+Return Text
+```
+
+The LangChain Tool is not involved.
+
+Typical unit tests verify:
+
+- reading an existing file,
+- reading an empty file,
+- handling a missing file,
+- returning the expected text.
+
+---
+
+# Integration Testing
+
+Integration tests verify that multiple components work together.
+
+```
+LangChain Tool
+
+↓
+
+Tool Invocation
+
+↓
+
+Business Logic
+
+↓
+
+Operating System
+
+↓
+
+File Contents
+```
+
+The objective is to confirm that the Tool correctly exposes the business logic through the LangChain interface.
+
+---
+
+# External Resources
+
+The File Reader Tool introduces the concept of external resources.
+
+```
+Application
+
+↓
+
+Operating System
+
+↓
+
+File System
+```
+
+Unlike arithmetic or date retrieval, the Tool now depends on resources managed outside the application.
+
+This is a common pattern in production software.
+
+Examples include:
+
+- databases,
+- APIs,
+- cloud storage,
+- message queues,
+- local files.
+
+---
+
+# Security Considerations
+
+Reading files introduces security concerns.
+
+An unrestricted Tool could potentially access sensitive information stored on the user's computer.
+
+Examples include:
+
+- passwords,
+- private documents,
+- configuration files,
+- personal information.
+
+For this educational project, we intentionally keep the implementation simple while recognizing that unrestricted file access is not appropriate for production systems.
+
+---
+
+# Educational Scope
+
+To remain consistent with the project's goals, the Tool will:
+
+- read plain text files,
+- demonstrate LangChain Tool integration,
+- illustrate interaction with the operating system.
+
+The Tool will not implement advanced security mechanisms such as:
+
+- directory restrictions,
+- file permission policies,
+- sandboxing,
+- user authentication.
+
+These topics belong to future repositories focused on production AI systems.
+
+---
+
+# Error Handling Philosophy
+
+Software should fail gracefully.
+
+Instead of terminating unexpectedly, the Tool should provide meaningful feedback.
+
+Conceptually:
+
+```
+Open File
+
+↓
+
+Success?
+
+├── Yes
+
+│     ↓
+
+│  Return Contents
+
+│
+
+└── No
+
+      ↓
+
+Return Readable Error
+```
+
+Clear error messages improve debugging and provide a better user experience.
+
+---
+
+# Consistency Across Tools
+
+Although each Tool solves a different problem, they all follow the same engineering workflow.
+
+```
+Business Logic
+
+↓
+
+LangChain Tool
+
+↓
+
+Demo
+
+↓
+
+Unit Tests
+
+↓
+
+Integration Tests
+```
+
+This consistency makes the project easier to understand and maintain.
+
+---
+
+# Connection with Previous Tools
+
+The first three Tools now represent three different categories of Agent capabilities.
+
+```
+Calculator
+
+↓
+
+Computation
+
+
+
+Clock
+
+↓
+
+Dynamic System Information
+
+
+
+File Reader
+
+↓
+
+Persistent Local Information
+```
+
+Together, they establish the foundation for Tool selection in the next phase.
+
+---
+
+# Preparing for Tool Integration
+
+After implementing the File Reader Tool, the Agent will possess three independent capabilities.
+
+```
+Calculator
+
++
+
+Clock
+
++
+
+File Reader
+
+↓
+
+Tool Integration
+
+↓
+
+Reasoning Agent
+```
+
+The next phase will teach the Agent how to select the appropriate Tool based on the user's request.
+
+---
+
+# Key Takeaways
+
+- File operations depend on external system resources.
+- Unit tests verify the business logic independently.
+- Integration tests verify interaction between LangChain and the business logic.
+- Reading files introduces basic security considerations.
+- Educational implementations prioritize clarity over production-level security mechanisms.
+- Consistent architecture and testing strategies simplify future Tool integration.
+
+## Session 5 — File Reader Tool Summary
+
+---
+
+# Objective Achieved
+
+The File Reader Tool extends the Agent with the ability to retrieve information from local text files.
+
+Unlike the previous Tools, this capability introduces interaction with the operating system and the local file system.
+
+---
+
+# What Was Implemented
+
+The File Reader Tool consists of four components.
+
+```
+Business Logic
+
+↓
+
+LangChain Tool
+
+↓
+
+Demo
+
+↓
+
+Automated Tests
+```
+
+---
+
+# Business Logic
+
+A private helper function encapsulates the file reading logic.
+
+Responsibilities include:
+
+- reading UTF-8 text files,
+- handling missing files,
+- handling operating system errors,
+- returning readable messages.
+
+---
+
+# LangChain Tool
+
+The business logic is exposed through a LangChain Tool using the `@tool` decorator.
+
+This allows the functionality to be invoked by an Agent while keeping the business logic independent from LangChain.
+
+---
+
+# Demonstration
+
+A demonstration program verifies that the Tool correctly reads a local text file and returns its contents.
+
+The demo also introduces the use of relative paths with `pathlib`, making the project portable across different operating systems and development environments.
+
+---
+
+# Testing
+
+The File Reader Tool is fully validated through automated tests.
+
+## Unit Tests
+
+The unit tests verify the business logic independently from LangChain.
+
+They confirm:
+
+- reading an existing file,
+- handling a missing file,
+- correct behavior of the helper function.
+
+---
+
+## Integration Tests
+
+Integration tests verify the complete interaction between:
+
+```
+LangChain Tool
+
+↓
+
+Business Logic
+
+↓
+
+Operating System
+
+↓
+
+Local File
+```
+
+This confirms that the Tool behaves correctly when invoked through the LangChain interface.
+
+---
+
+# Engineering Concepts Reinforced
+
+During this phase, several software engineering concepts were reinforced.
+
+- Single Responsibility Principle (SRP)
+- Separation of Concerns
+- Error Handling
+- File System Interaction
+- Unit Testing
+- Integration Testing
+- Project Portability
+- Code Reusability
+
+---
+
+# Current Agent Capabilities
+
+The educational Agent now possesses three independent capabilities.
+
+```
+Calculator
+
+↓
+
+Mathematical Computation
+
+
+Clock
+
+↓
+
+Current Date and Time
+
+
+File Reader
+
+↓
+
+Read Local Text Files
+```
+
+Although these Tools are independent, they establish the foundation for the next phase, where the Agent will learn to select the appropriate Tool automatically.
+
+---
+
+# Phase 5.4 Complete
+
+At the end of this phase, the project includes:
+
+- Calculator Tool
+- Clock Tool
+- File Reader Tool
+- Demonstration programs
+- Unit tests
+- Integration tests
+- Automated validation using Ruff, MyPy, and Pytest
+
+The Agent is now ready for Tool Integration, where independent capabilities will become a true reasoning workflow.

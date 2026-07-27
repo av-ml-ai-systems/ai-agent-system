@@ -3685,3 +3685,716 @@ At the end of this phase, the project includes:
 - Automated validation using Ruff, MyPy, and Pytest
 
 The Agent is now ready for Tool Integration, where independent capabilities will become a true reasoning workflow.
+
+## Session 6 — Tool Integration
+
+---
+
+# Objective
+
+Until now, the Agent has been able to use individual Tools only when the developer explicitly invoked them.
+
+The objective of this session is to allow the Agent to automatically decide which Tool should be used to answer a user's request.
+
+This is the first step from a chatbot toward a true AI Agent.
+
+---
+
+# From Manual Tool Usage to Automatic Tool Selection
+
+So far, our workflow has been:
+
+```
+Developer
+
+↓
+
+Choose Tool
+
+↓
+
+Execute Tool
+
+↓
+
+Return Result
+```
+
+For example:
+
+```
+read_text_file.invoke(...)
+```
+
+or
+
+```
+calculate.invoke(...)
+```
+
+The developer always decides which Tool should be executed.
+
+---
+
+# The Goal
+
+After Tool Integration, the workflow becomes:
+
+```
+User
+
+↓
+
+Agent
+
+↓
+
+Reasoning
+
+↓
+
+Choose Tool
+
+↓
+
+Execute Tool
+
+↓
+
+Observe Result
+
+↓
+
+Generate Final Answer
+```
+
+The developer no longer selects the Tool.
+
+Instead, the language model decides which Tool is appropriate based on the user's request.
+
+---
+
+# What Does Tool Integration Mean?
+
+Tool Integration is the process of connecting multiple Tools to a language model so that they become available during conversation.
+
+Rather than calling a Tool directly, the developer provides the Agent with a collection of available capabilities.
+
+Example:
+
+```
+Available Tools
+
+├── Calculator
+
+├── Clock
+
+└── File Reader
+```
+
+The Agent can choose any of them.
+
+---
+
+# Tool Calling
+
+Modern language models support Tool Calling.
+
+Rather than producing only text, the model can produce a structured request indicating that a Tool should be executed.
+
+Conceptually:
+
+```
+User:
+
+"What time is it?"
+
+↓
+
+LLM
+
+↓
+
+Call Clock Tool
+
+↓
+
+Clock Tool executes
+
+↓
+
+LLM receives observation
+
+↓
+
+Final Answer
+```
+
+The Tool is no longer executed manually by the developer.
+
+---
+
+# Why Is This Important?
+
+Without Tool Calling:
+
+```
+LLM
+
+↓
+
+Text Only
+```
+
+With Tool Calling:
+
+```
+LLM
+
+↓
+
+Reasoning
+
+↓
+
+External Actions
+
+↓
+
+Updated Information
+
+↓
+
+Better Responses
+```
+
+The Agent can now interact with its environment instead of relying only on its internal knowledge.
+
+---
+
+# LangChain's Role
+
+LangChain provides the infrastructure that connects:
+
+```
+Chat Model
+
+↓
+
+Available Tools
+
+↓
+
+Tool Execution
+
+↓
+
+Conversation
+```
+
+The framework manages communication between the language model and the available Tools, allowing developers to focus on business logic rather than protocol implementation.
+
+---
+
+# Engineering Concepts
+
+Tool Integration reinforces several software engineering principles.
+
+## Composition
+
+The Agent is composed of multiple independent components.
+
+```
+Agent
+
+├── Chat Model
+
+├── Calculator
+
+├── Clock
+
+└── File Reader
+```
+
+Each component has a single responsibility.
+
+---
+
+## Single Responsibility Principle (SRP)
+
+Each Tool performs exactly one task.
+
+The Agent coordinates the Tools but does not implement their internal logic.
+
+---
+
+## Open/Closed Principle (OCP)
+
+The Agent is open for extension.
+
+New Tools can be added without modifying existing Tool implementations.
+
+Future examples may include:
+
+- Weather Tool
+- Database Tool
+- Search Tool
+
+The Agent simply receives an expanded list of available capabilities.
+
+---
+
+# Educational Goal
+
+The objective of this phase is **not** to build an advanced autonomous Agent.
+
+Instead, the objective is to understand how an LLM can:
+
+- discover available Tools,
+- decide which Tool to use,
+- execute that Tool,
+- incorporate the observation into its final response.
+
+This understanding forms the foundation for the Reasoning and Memory phases that follow.
+
+# Phase 5.5 — Tool Integration
+
+## Objective
+
+Integrate multiple external Tools into the AI Agent and understand how an Agent selects, executes, and receives results from external capabilities.
+
+The objective of this phase is educational: understand the complete lifecycle of a Tool-Using Agent before introducing more advanced orchestration frameworks.
+
+---
+
+# Tool Integration Architecture
+
+A Tool-Using Agent introduces a new responsibility:
+
+The Language Model is no longer only generating text. It can decide when an external capability is required.
+
+The architecture becomes:
+
+```
+User Request
+
+↓
+
+Tool-Aware Language Model
+
+↓
+
+Tool Selection
+
+↓
+
+Tool Execution
+
+↓
+
+Tool Result
+
+↓
+
+Final Language Model Response
+```
+
+---
+
+# 🟢 Tool Registry
+
+The Agent maintains a registry of available Tools.
+
+Example:
+
+```
+Tool Name
+
+↓
+
+Python Function
+```
+
+Current Tools:
+
+```
+calculator
+
+↓
+
+Arithmetic evaluation
+
+
+current_datetime
+
+↓
+
+System date and time
+
+
+read_text_file
+
+↓
+
+Local text file reading
+```
+
+The registry allows the Agent to dynamically locate and execute the correct Tool selected by the Language Model.
+
+---
+
+# 🟢 Binding Tools to the Language Model
+
+LangChain allows Tools to be connected directly with the Chat Model.
+
+The Agent provides:
+
+- Available Tools.
+- Tool descriptions.
+- Tool schemas.
+
+The Language Model uses this information to decide which Tool should be executed.
+
+Example workflow:
+
+```
+User:
+
+"What time is it?"
+
+↓
+
+LLM decides:
+
+"I need current_datetime Tool"
+
+↓
+
+Tool Call generated
+```
+
+---
+
+# 🟢 Tool Calling Lifecycle
+
+The complete Tool Calling workflow is:
+
+```
+Human Message
+
+↓
+
+AI Message
+(tool request)
+
+↓
+
+Tool Execution
+
+↓
+
+Tool Message
+(tool result)
+
+↓
+
+AI Message
+(final answer)
+```
+
+Each component has a specific responsibility.
+
+---
+
+# 🟢 Agent Responsibilities
+
+The Agent acts as the coordinator between the Language Model and external Tools.
+
+Responsibilities:
+
+🟢 Receive user requests.
+
+🟢 Send requests to the Tool-Aware Language Model.
+
+🟢 Detect Tool Calls.
+
+🟢 Locate the corresponding Tool.
+
+🟢 Execute the Tool.
+
+🟢 Send the Tool result back to the Language Model.
+
+🟢 Return the final response.
+
+---
+
+# 🟢 Educational Tool Loop Implementation
+
+The implemented workflow:
+
+```
+User
+
+↓
+
+ToolAgent
+
+↓
+
+Chat Model
+
+↓
+
+Tool Call
+
+↓
+
+Python Tool
+
+↓
+
+ToolMessage
+
+↓
+
+Chat Model
+
+↓
+
+Final Answer
+```
+
+This represents the fundamental behavior of a modern AI Agent.
+
+---
+
+# 🟢 Example Execution
+
+User request:
+
+```
+What time is it?
+```
+
+The Language Model generates:
+
+```
+Tool Call:
+
+current_datetime()
+```
+
+The Agent executes:
+
+```
+current_datetime()
+
+↓
+
+2026-07-26T19:33:11
+```
+
+The Language Model receives the result and generates:
+
+```
+The current time is 7:36 PM on July 26, 2026.
+```
+
+---
+
+# 🟢 Testing Strategy
+
+Phase 5.5 introduced two testing levels.
+
+---
+
+## 🟢 Unit Tests
+
+Purpose:
+
+Validate the internal Agent structure without depending on the complete LLM workflow.
+
+Validated:
+
+🟢 ToolAgent initialization.
+
+🟢 Tool registry creation.
+
+🟢 Available Tools registration.
+
+---
+
+## 🟢 Integration Tests
+
+Purpose:
+
+Validate the complete Agent lifecycle.
+
+Workflow tested:
+
+```
+User Request
+
+↓
+
+Language Model
+
+↓
+
+Tool Selection
+
+↓
+
+Tool Execution
+
+↓
+
+Final Response
+```
+
+Validated:
+
+🟢 LLM Tool Calling.
+
+🟢 Correct Tool selection.
+
+🟢 Tool execution.
+
+🟢 Final response generation.
+
+---
+
+# 🟢 Engineering Concepts
+
+## 🟢 Composition
+
+The Agent is composed of multiple independent components:
+
+```
+Language Model
+
++
+
+Tools
+
++
+
+Tool Registry
+
++
+
+Execution Logic
+```
+
+Each component has a clear responsibility.
+
+---
+
+## 🟢 Single Responsibility Principle (SRP)
+
+Each module focuses on one responsibility.
+
+Examples:
+
+```
+calculator.py
+
+↓
+
+Arithmetic Tool
+
+
+clock.py
+
+↓
+
+Date and Time Tool
+
+
+file_reader.py
+
+↓
+
+File Reading Tool
+
+
+tool_agent.py
+
+↓
+
+Agent Coordination
+```
+
+---
+
+## 🟢 Open/Closed Principle (OCP)
+
+The Agent architecture allows adding new Tools without modifying the core Agent logic.
+
+Example:
+
+Adding:
+
+```
+weather_tool.py
+```
+
+only requires registering the new Tool.
+
+The Agent workflow remains unchanged.
+
+---
+
+# 🟢 Phase 5.5 Final Validation
+
+Completed:
+
+🟢 Tool architecture design.
+
+🟢 Tool registry implementation.
+
+🟢 Tool-aware Chat Model integration.
+
+🟢 Automatic Tool selection.
+
+🟢 Tool execution.
+
+🟢 Final response generation.
+
+🟢 Unit tests.
+
+🟢 Integration tests.
+
+🟢 Code quality validation with Ruff.
+
+🟢 Type validation with MyPy.
+
+🟢 Automated testing with Pytest.
+
+---
+
+# 🟢 Key Learning
+
+An AI Agent is not only a Language Model.
+
+An Agent is:
+
+```
+Language Model
+
++
+
+Decision Making
+
++
+
+External Capabilities
+
++
+
+Execution Loop
+```
+
+The fundamental Agent capability is the ability to decide:
+
+"I need an external Tool to complete this task."

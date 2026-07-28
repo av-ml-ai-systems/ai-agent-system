@@ -1,4 +1,4 @@
-# 🟡 Phase 6.1 — ReAct Pattern (Theory)
+# Phase 6.1 — ReAct Pattern (Theory)
 
 ## What is ReAct?
 

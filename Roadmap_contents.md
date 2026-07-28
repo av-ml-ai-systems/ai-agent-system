@@ -319,46 +319,55 @@ Pre-commit
 
 🟢 Open/Closed Principle (OCP).
 
-🟡 Phase 6 — Reasoning & Agent Workflow
-Objective
+## 🟢 Phase 6 — Reasoning & Agent Workflow
+
+### Objective
 
 Understand how an Agent reasons.
 
 Educational implementation only.
 
-6.1 — ReAct Pattern
+---
 
-⬜ Thought
+## 6.1 — ReAct Pattern
 
-⬜ Action
+🟢 Thought
 
-⬜ Observation
+🟢 Action
 
-⬜ Final Answer
+🟢 Observation
 
-6.2 — Reasoning Loop
+🟢 Final Answer
 
-⬜ Multi-step reasoning
+---
 
-⬜ Tool selection
+## 6.2 — Reasoning Loop
 
-⬜ Observation
+🟢 Multi-step reasoning
 
-⬜ Final response
+🟢 Tool selection
 
-6.3 — Validation
+🟢 Observation
 
-⬜ Unit tests
+🟢 Final response
 
-⬜ Integration tests
+---
 
-⬜ Documentation
+## 6.3 — Validation
 
-Engineering Concepts
+🟢 Unit tests
 
-⬜ Workflow orchestration
+🟢 Integration tests
 
-⬜ Responsibility boundaries
+🟢 Documentation
+
+---
+
+## Engineering Concepts
+
+🟢 Workflow orchestration
+
+🟢 Responsibility boundaries
 
 🟡 Phase 7 — Memory & Conversation State
 Objective

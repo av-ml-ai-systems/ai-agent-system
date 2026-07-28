@@ -44,10 +44,48 @@ class ToolAgent:
 
         self._tool_registry = {tool.name: tool for tool in TOOLS}
 
+    def _display_reasoning_step(
+        self,
+        title: str,
+        content: str,
+    ) -> None:
+        """
+        Display one educational reasoning step.
+
+        Parameters
+        ----------
+        title:
+            Name of the reasoning stage.
+
+        content:
+            Description of the reasoning stage.
+        """
+
+        print("\n" + "=" * 60)
+        print(title.upper())
+        print("=" * 60)
+        print(content)
+
     def invoke(self, user_message: str):
         """
         Execute one complete reasoning cycle.
         """
+
+        self._display_reasoning_step(
+            "Thought",
+            (
+                "The Agent analyzes the user's request and decides "
+                "whether an external Tool is required."
+            ),
+        )
+
+        self._display_reasoning_step(
+            "Final Reasoning",
+            (
+                "The Agent incorporates the Tool observation into "
+                "its reasoning before generating the final answer."
+            ),
+        )
 
         messages = [
             HumanMessage(content=user_message),
@@ -56,15 +94,35 @@ class ToolAgent:
         response = self._model.invoke(messages)
 
         if not response.tool_calls:
+            self._display_reasoning_step(
+                "Action",
+                "No Tool required.",
+            )
+
+            self._display_reasoning_step(
+                "Final Answer",
+                response.content,
+            )
+
             return response
 
         messages.append(response)
 
         tool_call = response.tool_calls[0]
 
+        self._display_reasoning_step(
+            "Action",
+            f"Executing Tool: {tool_call['name']}",
+        )
+
         tool = self._tool_registry[tool_call["name"]]
 
         tool_result = tool.invoke(tool_call["args"])
+
+        self._display_reasoning_step(
+            "Observation",
+            str(tool_result),
+        )
 
         tool_message = ToolMessage(
             content=str(tool_result),
@@ -74,5 +132,10 @@ class ToolAgent:
         messages.append(tool_message)
 
         final_response = self._model.invoke(messages)
+
+        self._display_reasoning_step(
+            "Final Answer",
+            final_response.content,
+        )
 
         return final_response

@@ -5,11 +5,8 @@ Location:
     examples/
 
 Purpose:
-    Demonstrate the educational Tool Agent.
-
-Description:
-    This example sends a request to the ToolAgent and prints
-    the raw response returned by the tool-aware language model.
+    Demonstrate conversational memory using the educational
+    ToolAgent.
 """
 
 from ai_agent_system.tool_agent import ToolAgent
@@ -17,18 +14,28 @@ from ai_agent_system.tool_agent import ToolAgent
 
 def main() -> None:
     """
-    Run the Tool Agent demonstration.
+    Demonstrate a multi-turn conversation.
     """
 
     agent = ToolAgent()
 
-    response = agent.invoke("What time is it?")
+    print("\nUSER:")
+    print("My name is Alvaro.\n")
 
-    print("\nResponse Type:\n")
-    print(type(response))
+    response = agent.invoke("My name is Alvaro.")
 
-    print("\nRaw Response:\n")
-    print(response)
+    print("\nASSISTANT:")
+    print(response.content)
+
+    print("\n" + "=" * 70)
+
+    print("\nUSER:")
+    print("What is my name?\n")
+
+    response = agent.invoke("What is my name?")
+
+    print("\nASSISTANT:")
+    print(response.content)
 
 
 if __name__ == "__main__":

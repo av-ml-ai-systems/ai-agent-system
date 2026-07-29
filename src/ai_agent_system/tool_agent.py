@@ -14,9 +14,10 @@ Description:
     preserving a clean software architecture.
 """
 
-from langchain_core.messages import HumanMessage, ToolMessage
+from langchain_core.messages import ToolMessage
 from langchain_ollama import ChatOllama
 
+from ai_agent_system.conversation import Conversation
 from ai_agent_system.tools.calculator import calculator
 from ai_agent_system.tools.clock import current_datetime
 from ai_agent_system.tools.file_reader import read_text_file
@@ -42,6 +43,8 @@ class ToolAgent:
     def __init__(self) -> None:
         self._model = TOOL_AWARE_MODEL
 
+        self._conversation = Conversation()
+
         self._tool_registry = {tool.name: tool for tool in TOOLS}
 
     def _display_reasoning_step(
@@ -66,10 +69,17 @@ class ToolAgent:
         print("=" * 60)
         print(content)
 
-    def invoke(self, user_message: str):
+    def invoke(
+        self,
+        user_message: str,
+    ):
         """
         Execute one complete reasoning cycle.
         """
+
+        self._conversation.add_user_message(
+            user_message,
+        )
 
         self._display_reasoning_step(
             "Thought",
@@ -79,17 +89,7 @@ class ToolAgent:
             ),
         )
 
-        self._display_reasoning_step(
-            "Final Reasoning",
-            (
-                "The Agent incorporates the Tool observation into "
-                "its reasoning before generating the final answer."
-            ),
-        )
-
-        messages = [
-            HumanMessage(content=user_message),
-        ]
+        messages = self._conversation.messages()
 
         response = self._model.invoke(messages)
 
@@ -97,6 +97,10 @@ class ToolAgent:
             self._display_reasoning_step(
                 "Action",
                 "No Tool required.",
+            )
+
+            self._conversation.add_ai_message(
+                response.content,
             )
 
             self._display_reasoning_step(
@@ -131,7 +135,19 @@ class ToolAgent:
 
         messages.append(tool_message)
 
+        self._display_reasoning_step(
+            "Final Reasoning",
+            (
+                "The Agent incorporates the Tool observation into "
+                "its reasoning before generating the final answer."
+            ),
+        )
+
         final_response = self._model.invoke(messages)
+
+        self._conversation.add_ai_message(
+            final_response.content,
+        )
 
         self._display_reasoning_step(
             "Final Answer",

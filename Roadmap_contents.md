@@ -369,7 +369,8 @@ Educational implementation only.
 
 🟢 Responsibility boundaries
 
-🟡 Phase 7 — Memory & Conversation State
+## 🟢 Phase 7 — Memory & Conversation State
+
 Objective
 
 Understand short-term conversational memory.
@@ -378,27 +379,31 @@ Only conversation memory.
 
 No long-term memory.
 
-7.1 — Memory Concepts
+### 🟢 7.1 — Memory Concepts
 
-⬜ Short-term memory
+🟢 Short-term memory
 
-⬜ Conversation history
+🟢 Conversation history
 
-⬜ State ownership
+🟢 State ownership
 
-7.2 — Memory Integration
+---
 
-⬜ Connect memory with reasoning
+### 🟢 7.2 — Memory Integration
 
-⬜ Maintain clean responsibilities
+🟢 Connect memory with reasoning
 
-⬜ Validate behavior
+🟢 Maintain clean responsibilities
 
-Engineering Concepts
+🟢 Validate behavior
 
-⬜ Encapsulation
+---
 
-⬜ State management
+### Engineering Concepts
+
+🟢 Encapsulation
+
+🟢 State management
 
 🟡 Phase 8 — User Interfaces
 Objective

@@ -8,7 +8,9 @@ Purpose:
     Defines conversation state management.
 """
 
+from langchain_core.messages import AIMessage
 from langchain_core.messages import BaseMessage
+from langchain_core.messages import HumanMessage
 
 
 class Conversation:
@@ -32,9 +34,40 @@ class Conversation:
 
         self._messages.append(message)
 
+    def add_user_message(
+        self,
+        content: str,
+    ) -> None:
+        """
+        Add a HumanMessage to the conversation.
+        """
+
+        self.add_message(
+            HumanMessage(content=content),
+        )
+
+    def add_ai_message(
+        self,
+        content: str,
+    ) -> None:
+        """
+        Add an AIMessage to the conversation.
+        """
+
+        self.add_message(
+            AIMessage(content=content),
+        )
+
     def messages(self) -> list[BaseMessage]:
         """
-        Return stored conversation messages.
+        Return the stored conversation history.
         """
 
         return self._messages.copy()
+
+    def clear(self) -> None:
+        """
+        Remove all stored messages.
+        """
+
+        self._messages.clear()

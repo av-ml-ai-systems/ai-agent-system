@@ -5,7 +5,7 @@ Location:
     src/ai_agent_system/
 
 Purpose:
-    Define an educational AI Agent capable of using external
+    Define an AI Agent capable of using external
     Tools through LangChain.
 
 Description:
@@ -14,7 +14,7 @@ Description:
     preserving a clean software architecture.
 """
 
-from langchain_core.messages import ToolMessage
+from langchain_core.messages import SystemMessage, ToolMessage
 from langchain_ollama import ChatOllama
 
 from ai_agent_system.conversation import Conversation
@@ -37,13 +37,28 @@ TOOL_AWARE_MODEL = CHAT_MODEL.bind_tools(TOOLS)
 
 class ToolAgent:
     """
-    Educational AI Agent capable of using LangChain Tools.
+    AI Agent capable of using LangChain Tools.
     """
 
     def __init__(self) -> None:
         self._model = TOOL_AWARE_MODEL
 
         self._conversation = Conversation()
+
+        self._system_message = SystemMessage(
+            content=(
+                "You are a friendly AI assistant.\n\n"
+                "Your internal reasoning is private and must never be "
+                "shown to the user.\n\n"
+                "Never explain whether tools were or were not selected.\n\n"
+                "Use tools whenever necessary.\n\n"
+                "Respond naturally and conversationally to greetings, "
+                "introductions, and questions.\n\n"
+                "If the user shares their name, acknowledge it naturally.\n\n"
+                "Use conversation history when answering questions about "
+                "previous messages."
+            )
+        )
 
         self._tool_registry = {tool.name: tool for tool in TOOLS}
 
@@ -89,7 +104,10 @@ class ToolAgent:
             ),
         )
 
-        messages = self._conversation.messages()
+        messages = [
+            self._system_message,
+            *self._conversation.messages(),
+        ]
 
         response = self._model.invoke(messages)
 

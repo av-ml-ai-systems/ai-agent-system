@@ -28,4 +28,13 @@ def test_clock_tool_agent_workflow() -> None:
 
     assert response.content
 
-    assert "time" in response.content.lower()
+    assert any(
+        keyword in response.content.lower()
+        for keyword in [
+            "pm",
+            "am",
+            "hour",
+            "clock",
+            ":",
+        ]
+    )

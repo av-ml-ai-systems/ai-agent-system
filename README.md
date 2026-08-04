@@ -360,34 +360,30 @@ This architecture demonstrates the separation between presentation and business 
 
 # Testing
 
-The project includes automated tests covering the core components of the system.
+## Testing & Code Quality
 
-Current test suite includes:
+The project includes automated testing and static analysis to ensure code quality and maintainability.
 
-- Agent behavior
-- Conversation management
-- Prompt generation
-- LangChain prompt adapter
-- Calculator Tool
-- Clock Tool
-- File Reader Tool
-- ToolAgent
-- Reasoning workflow
-- Integration tests
-
-Run the complete test suite with:
+Run the complete quality pipeline before committing changes:
 
 ```
-pytest
+uv run pytest
+
+uv run ruff check
+
+uv run mypy src
+
+pre-commit run --all-files
 ```
 
-Run static analysis:
+The project uses:
 
-```
-ruff check .
+- **Pytest** for unit and integration testing.
+- **Ruff** for linting and code quality.
+- **MyPy** for static type checking.
+- **Pre-commit** to automatically execute quality checks before Git commits.
 
-mypy src
-```
+Following this workflow helps maintain a clean, consistent, and production-style codebase.
 
 ---
 

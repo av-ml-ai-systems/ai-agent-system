@@ -430,22 +430,27 @@ Possible future extensions include:
 - CI/CD pipelines
 - Kubernetes deployment
 
+
 ---
 
 # Author
 
-**Alvaro Vega**
+**AI/ML Engineering Portfolio Project**
 
-Machine Learning Engineer • AI Engineer
+Machine Learning Engineering project built to demonstrate modern AI application development using production-inspired software engineering practices.
 
-GitHub:
-
-https://github.com/av-ml-ai-systems
-
-LinkedIn:
-
-https://www.linkedin.com/in/alvarovegavargas/
+Designed as a portfolio project to showcase end-to-end AI system development, from LLM orchestration and backend APIs to interactive user interfaces and automated testing.
 
 ---
 
-If you found this repository useful, consider giving it a ⭐ on GitHub.
+## Final Note
+
+This repository demonstrates the implementation of a complete AI application using LangChain, Ollama, FastAPI, React, and Streamlit within a clean, modular, and extensible architecture.
+
+The project emphasizes practical AI Engineering concepts, software design, testing, and system integration, providing a solid foundation for building production-grade AI applications.
+
+🔗 Repository
+
+https://github.com/av-ml-ai-systems/ai-agent-system
+
+---

@@ -437,7 +437,7 @@ Possible future extensions include:
 
 **AI/ML Engineering Portfolio Project**
 
-Machine Learning Engineering project built to demonstrate modern AI application development using production-inspired software engineering practices.
+AI Engineering project built to demonstrate modern AI application development using production-inspired software engineering practices.
 
 Designed as a portfolio project to showcase end-to-end AI system development, from LLM orchestration and backend APIs to interactive user interfaces and automated testing.
 

@@ -7,7 +7,8 @@ Location:
 Purpose:
     Defines the Agent class, which coordinates user interaction
     with a chat-based language model, prompt generation, and
-    conversation state.
+    conversation state. This module implements the basic conversational Agent developed in the early phases
+    of the project. The more advanced ToolAgent extends these concepts with LangChain tool integration.
 
 The Agent depends only on abstractions:
 - ChatModel

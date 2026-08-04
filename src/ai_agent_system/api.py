@@ -15,7 +15,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from ai_agent_system.tool_agent import ToolAgent
 
 app = FastAPI(
-    title="AI Agent Sysytem API",
+    title="AI Agent System API",
     description="REST API exposing the AI Agent System.",
     version="1.0.0",
 )

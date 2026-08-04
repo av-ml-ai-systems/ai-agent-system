@@ -632,3 +632,237 @@ Objectives:
 - Connect React frontend with FastAPI backend.
 - Display conversation history.
 - Implement simple user interface.
+
+# Phase 8.3 — React Frontend
+
+## Objective
+
+Build a simple React frontend that communicates with the FastAPI backend and allows users to interact with the AI Agent through a modern web interface.
+
+---
+
+## What Was Implemented
+
+### React Project
+
+- Created a React application using Vite.
+- Added the React frontend inside the same repository (`react-chat/`) following the project philosophy of one repository per educational objective.
+- Used the default Vite template as the starting point and replaced it with a minimal custom interface.
+
+---
+
+### Chat Interface
+
+Implemented a minimal chat interface including:
+
+- Project title.
+- Conversation window.
+- Input text box.
+- Send button.
+- Conversation history.
+- User messages.
+- Assistant messages.
+
+The interface intentionally remains simple because the objective of this project is understanding the architecture rather than frontend design.
+
+---
+
+### React State Management
+
+Implemented state management using React Hooks.
+
+```
+const [messages, setMessages] = useState([]);
+const [input, setInput] = useState("");
+```
+
+This introduced the basic React concepts required for a simple conversational application without introducing unnecessary complexity.
+
+---
+
+### FastAPI Integration
+
+Implemented asynchronous communication with the FastAPI backend using the Fetch API.
+
+Workflow:
+
+React
+
+↓
+
+HTTP POST
+
+↓
+
+FastAPI `/chat`
+
+↓
+
+ToolAgent
+
+↓
+
+LangChain
+
+↓
+
+Ollama
+
+↓
+
+FastAPI Response
+
+↓
+
+React UI Update
+
+The frontend sends the user's message to the backend and displays the assistant's response after receiving the JSON response.
+
+---
+
+### End-to-End Integration
+
+Successfully connected every project layer:
+
+React
+
+↓
+
+FastAPI
+
+↓
+
+ToolAgent
+
+↓
+
+LangChain
+
+↓
+
+Ollama
+
+↓
+
+FastAPI
+
+↓
+
+React
+
+The complete system now functions as a full-stack AI application.
+
+---
+
+### CORS Configuration
+
+During the integration, the browser blocked requests from React to FastAPI.
+
+Error:
+
+```
+Access to fetch has been blocked by CORS policy.
+```
+
+The problem occurred because:
+
+- React runs on:
+
+```
+http://localhost:5173
+```
+
+- FastAPI runs on:
+
+```
+http://127.0.0.1:8000
+```
+
+Since browsers treat them as different origins, FastAPI must explicitly authorize the frontend.
+
+The solution was adding the FastAPI CORS middleware:
+
+```
+from fastapi.middleware.cors import CORSMiddleware
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=[
+        "http://localhost:5173",
+    ],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+```
+
+This solved the communication problem while following good security practices by allowing only the trusted frontend instead of allowing every origin.
+
+---
+
+### Functional Validation
+
+The complete application was tested successfully.
+
+Conversation memory:
+
+```
+My name is John.
+
+↓
+
+What is my name?
+
+↓
+
+Your name is John.
+```
+
+Clock Tool:
+
+```
+What time is it?
+```
+
+Calculator Tool:
+
+```
+What is 3 * 4?
+```
+
+All requests successfully passed through the complete architecture.
+
+---
+
+### Portfolio Assets
+
+Captured the first complete screenshot of the AI Agent System running through the React interface.
+
+The screenshot will be included in the repository README during the Portfolio Preparation phase.
+
+---
+
+## Engineering Concepts Learned
+
+- React fundamentals
+- React Hooks (`useState`)
+- Component state management
+- Fetch API
+- REST API consumption
+- Frontend / Backend separation
+- Client-server communication
+- JSON serialization
+- Asynchronous programming with `async/await`
+- CORS (Cross-Origin Resource Sharing)
+- End-to-end integration testing
+- Full-stack AI application architecture
+
+---
+
+## Key Takeaways
+
+- React should remain responsible only for presentation and user interaction.
+- FastAPI serves as the API layer between the frontend and the AI Agent.
+- The ToolAgent remains completely independent of the frontend technology.
+- Each layer has a single responsibility, producing a modular and maintainable architecture.
+- Even a simple educational AI Agent benefits from a clean separation between frontend, backend, business logic, and language model.
